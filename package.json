@@ -1,29 +1,36 @@
 {
-  "name": "sportify",
-  "version": "1.0.0",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js",
-    "start:prod": "NODE_ENV=nodemon server.js"
-  },
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "bcryptjs": "^3.0.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "express-session": "^1.18.1",
-    "jsonwebtoken": "^9.0.2",
-    "mailtrap": "^4.0.0",
-    "mongoose": "^8.10.1",
-    "morgan": "^1.10.0",
-    "nodemailer": "^6.10.0",
-    "nodemon": "^3.1.9",
-    "passport": "^0.7.0",
-    "passport-google-oauth20": "^2.0.0",
-    "validator": "^13.12.0"
-  }
+    "name": "angular-project-back-end",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Ahmedkx/Angular-Project-Back-End.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Ahmedkx/Angular-Project-Back-End/issues"
+    },
+    "homepage": "https://github.com/Ahmedkx/Angular-Project-Back-End#readme",
+    "dependencies": {
+        "@aws-sdk/client-s3": "^3.758.0",
+        "@aws-sdk/s3-request-presigner": "^3.758.0",
+        "bcryptjs": "^3.0.2",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.7",
+        "express": "^4.21.2",
+        "google-auth-library": "^9.15.1",
+        "jsonwebtoken": "^9.0.2",
+        "mongoose": "^8.12.0",
+        "multer": "^1.4.5-lts.2",
+        "stripe": "^17.7.0",
+        "zod": "^3.24.2"
+    }
 }
