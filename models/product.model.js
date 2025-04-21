@@ -78,6 +78,9 @@ const productSchema = new mongoose.Schema(
                 estimatedDelivery: { type: Number, min: 0, required: true },
             },
         },
+        tags: {
+            type: [String],
+        },
         soldBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
