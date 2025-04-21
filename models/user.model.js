@@ -41,18 +41,18 @@ const egyptianCities = [
 
 const userSchema = new mongoose.Schema(
     {
-        firstName: {
+        name: {
             type: String,
             required: true,
             minlength: [1, "First Name must be at least 3 characters long"],
             maxlength: [16, "last Name must be at most 16 characters long"],
         },
-        lastName: {
-            type: String,
-            required: true,
-            minlength: [1, "last Name must be at least 3 characters long"],
-            maxlength: [16, "last Name must be at most 16 characters long"],
-        },
+        // lastName: {
+        //     type: String,
+        //     required: true,
+        //     minlength: [1, "last Name must be at least 3 characters long"],
+        //     maxlength: [16, "last Name must be at most 16 characters long"],
+        // },
         provider: {
             type: String,
             enum: ["local", "google"],
@@ -63,17 +63,25 @@ const userSchema = new mongoose.Schema(
             minlength: [11, "Phone number must be 11 characters long"],
             maxlength: [11, "Phone number must be 11 characters long"],
         },
-        country: {
+        // country: {
+        //     type: String,
+        //     enum: ["Egypt"],
+        // },
+        // city: {
+        //     type: String,
+        //     enum: egyptianCities,
+        // },
+        adress: {
             type: String,
-            enum: ["Egypt"],
         },
-        city: {
+        // bio: {
+        //     type: String,
+        //     minlength: [3, "bio must be at least 3 characters long"],
+        // },
+        tags: {
             type: String,
-            enum: egyptianCities,
-        },
-        bio: {
-            type: String,
-            minlength: [3, "bio must be at least 3 characters long"],
+            enum: ["regular", "premium "],
+            default: "regular",
         },
         email: {
             type: String,
@@ -108,14 +116,29 @@ const userSchema = new mongoose.Schema(
             enum: ["male", "female"],
         },
         role: {
-            type: String,
-            enum: ["client", "seller", "admin"],
-            default: "client",
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Role",
+            default: async function () {
+                const Role = require("./role.model");
+                const defaultRole = await Role.findOne({ name: "customer" });
+                return defaultRole?._id;
+            },
             required: true,
         },
+        // role: {
+        //     type: String,
+        //     enum: ["customer", "seller", "admin", "super-admin"],
+        //     default: "customer",
+        //     required: true,
+        // },
+        // permissions: { type: [String], enum: [] },
         wallet: {
             type: Number,
             default: 0,
+        },
+        isDeleted: {
+            type: Boolean,
+            default: false,
         },
     },
     {

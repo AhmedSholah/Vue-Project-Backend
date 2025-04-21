@@ -60,18 +60,18 @@ const productSchema = new mongoose.Schema(
             required: true,
             min: 0,
         },
-        weight: {
-            type: Number,
-            required: true,
-            min: 0,
-        },
-        dimensions: {
-            type: {
-                length: { type: Number, min: 0, required: true },
-                width: { type: Number, min: 0, required: true },
-                height: { type: Number, min: 0, required: true },
-            },
-        },
+        // weight: {
+        //     type: Number,
+        //     required: true,
+        //     min: 0,
+        // },
+        // dimensions: {
+        //     type: {
+        //         length: { type: Number, min: 0, required: true },
+        //         width: { type: Number, min: 0, required: true },
+        //         height: { type: Number, min: 0, required: true },
+        //     },
+        // },
         shippingInfo: {
             type: {
                 shippingCost: { type: Number, min: 0, required: true },
