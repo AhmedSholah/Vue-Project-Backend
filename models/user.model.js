@@ -116,14 +116,15 @@ const userSchema = new mongoose.Schema(
       enum: ["male", "female"],
     },
     role: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Role",
-      default: async function () {
-        const Role = require("./roles.model");
-        const defaultRole = await Role.findOne({ name: "customer" });
-        return defaultRole?._id;
-      },
-      required: true,
+      // type: mongoose.Schema.Types.ObjectId,
+      // ref: "Role",
+      // default: async function () {
+      //     const Role = require("./role.model");
+      //     const defaultRole = await Role.findOne({ name: "customer" });
+      //     return defaultRole?._id;
+      // },
+      // required: true,
+
     },
     // role: {
     //     type: String,
