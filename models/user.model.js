@@ -1,51 +1,13 @@
 const mongoose = require("mongoose");
-
-const egyptianCities = [
-    "Cairo",
-    "Alexandria",
-    "Giza",
-    "Shubra El-Kheima",
-    "Port Said",
-    "Suez",
-    "Mansoura",
-    "Tanta",
-    "Asyut",
-    "Ismailia",
-    "Fayoum",
-    "Zagazig",
-    "Minya",
-    "Damietta",
-    "Beni Suef",
-    "Luxor",
-    "Aswan",
-    "6th of October City",
-    "Damanhur",
-    "Shibin El Kom",
-    "Hurghada",
-    "Banha",
-    "Minya al-Qamh",
-    "Kafr El Sheikh",
-    "Qena",
-    "Sohag",
-    "Mahalla",
-    "Mersa Matruh",
-    "Rashid",
-    "Edfu",
-    "Kafr El Dawar",
-    "El-Mahalla El-Kubra",
-    "Beni Suef",
-    "Tanta",
-    "Gharbia",
-    "Qalyubia",
-];
+const mongooseDelete = require("mongoose-delete");
 
 const userSchema = new mongoose.Schema(
     {
         name: {
             type: String,
             required: true,
-            minlength: [1, "First Name must be at least 3 characters long"],
-            maxlength: [16, "last Name must be at most 16 characters long"],
+            minlength: [1, "Name must be at least 3 characters long"],
+            maxlength: [16, "Name must be at most 16 characters long"],
         },
         // lastName: {
         //     type: String,
@@ -115,22 +77,22 @@ const userSchema = new mongoose.Schema(
             type: String,
             enum: ["male", "female"],
         },
-        // role: {
-        // type: mongoose.Schema.Types.ObjectId,
-        // ref: "Role",
-        // default: async function () {
-        //     const Role = require("./role.model");
-        //     const defaultRole = await Role.findOne({ name: "customer" });
-        //     return defaultRole?._id;
-        // },
-        // required: true,
-        // },
-        // role: {
-        //     type: String,
-        //     enum: ["customer", "seller", "admin", "super-admin"],
-        //     default: "customer",
-        //     required: true,
-        // },
+        role: {
+            // type: mongoose.Schema.Types.ObjectId,
+            // ref: "Role",
+            // default: async function () {
+            //     const Role = require("./role.model");
+            //     const defaultRole = await Role.findOne({ name: "customer" });
+            //     return defaultRole?._id;
+            // },
+            // required: true,
+            // },
+            // role: {
+            //     type: String,
+            //     enum: ["customer", "seller", "admin", "super-admin"],
+            //     default: "customer",
+            //     required: true,
+        },
         // permissions: { type: [String], enum: [] },
         wallet: {
             type: Number,
@@ -149,10 +111,6 @@ const userSchema = new mongoose.Schema(
                 ],
             },
         ],
-        isDeleted: {
-            type: Boolean,
-            default: false,
-        },
     },
     {
         timestamps: true,
@@ -169,6 +127,11 @@ userSchema.virtual("avatarUrl").get(function () {
     } else {
         return null;
     }
+});
+
+userSchema.plugin(mongooseDelete, {
+    deletedAt: true,
+    overrideMethods: "all",
 });
 
 const User = mongoose.model("User", userSchema);

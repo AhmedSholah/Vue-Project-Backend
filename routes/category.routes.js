@@ -11,25 +11,20 @@ const multer = require("multer");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-router
-    .route("/")
-    .get(categoryController.getCategories)
-    .post(
-        isAuthenticated,
-        validateSchema(categorySchema.addCategorySchema),
-        checkRole(["admin"]),
-        categoryController.addCategory,
-    );
+router.route("/").get(categoryController.getCategories).post(
+    // isAuthenticated,
+    // validateSchema(categorySchema.addCategorySchema),
+    // checkRole(["admin"]),
+    categoryController.addCategory,
+);
 // .patch(updateCategory)
 
-router
-    .route("/:categoryId")
-    .delete(
-        isAuthenticated,
-        checkRole(["admin"]),
-        validateSchema(categorySchema.deletCategorySchema, "params"),
-        categoryController.deletCategory,
-    );
+router.route("/:categoryId").delete(
+    // isAuthenticated,
+    // checkRole(["admin"]),
+    // validateSchema(categorySchema.deletCategorySchema, "params"),
+    categoryController.deletCategory,
+);
 
 router
     .route("/:categoryId/image")

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const FavoriteModel = require("./favorite.model");
+const mongooseDelete = require("mongoose-delete");
 
 const productSchema = new mongoose.Schema(
     {
@@ -115,6 +116,11 @@ productSchema.virtual("images").get(function () {
     return this.imageNames.map(
         (imageName) => `${process.env.AWS_S3_PUBLIC_BUCKET_URL}${imageName}`,
     );
+});
+
+productSchema.plugin(mongooseDelete, {
+    deletedAt: true,
+    overrideMethods: "all",
 });
 
 const Product = mongoose.model("Product", productSchema);

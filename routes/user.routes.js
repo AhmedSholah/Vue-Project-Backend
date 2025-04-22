@@ -27,12 +27,14 @@ router
     .patch(isAuthenticated, validateSchema(userValidation.updateUserSchema), updateUser);
 
 // For Admin Use
-router.route("/:id").get(
-    isAuthenticated,
-    // checkRole(["admin"]),
-    getUser,
-);
-//     .delete(isAuthenticated, deleteUser);
+router
+    .route("/:id")
+    .get(
+        isAuthenticated,
+        // checkRole(["admin"]),
+        getUser,
+    )
+    .delete(isAuthenticated, deleteUser);
 
 router.route("/me/user").get(isAuthenticated, getCurrentUser);
 
