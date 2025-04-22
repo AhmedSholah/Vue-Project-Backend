@@ -9,22 +9,18 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const {
-  getAllUsers,
-  getUser,
-  updateUser,
-  deleteUser,
-  getCurrentUser,
-  updateAvatar,
+    getAllUsers,
+    getUser,
+    updateUser,
+    deleteUser,
+    getCurrentUser,
+    updateAvatar,
 } = require("../controllers/user.controller");
 
 router
-  .route("/")
-  .get(isAuthenticated, checkRole(["admin"]), getAllUsers)
-  .patch(
-    isAuthenticated,
-    validateSchema(userValidation.updateUserSchema),
-    updateUser
-  );
+    .route("/")
+    .get(isAuthenticated, checkRole(["admin"]), getAllUsers)
+    .patch(isAuthenticated, validateSchema(userValidation.updateUserSchema), updateUser);
 
 // For Admin Use
 // router
@@ -34,8 +30,6 @@ router
 
 router.route("/me/user").get(isAuthenticated, getCurrentUser);
 
-router
-  .route("/me/avatar")
-  .put(isAuthenticated, upload.single("file"), updateAvatar);
+router.route("/me/avatar").put(isAuthenticated, upload.single("file"), updateAvatar);
 
 module.exports = router;

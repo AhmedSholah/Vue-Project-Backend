@@ -7,9 +7,7 @@ const ProductModel = require("../models/product.model");
 
 const getCart = asyncWrapper(async (req, res, next) => {
     const { userId } = req.tokenPayload;
-    const cart = await CartModel.findOne({ user: userId }).populate(
-        "items.product"
-    );
+    const cart = await CartModel.findOne({ user: userId }).populate("items.product");
     if (!cart) {
         return next(AppError.create("Cart Not Found"));
     }
@@ -33,9 +31,7 @@ const addToCart = asyncWrapper(async (req, res, next) => {
             items: [{ product: productId, quantity }],
         });
     } else {
-        const itemIndex = cart.items.findIndex(
-            (item) => item.product.toString() === productId
-        );
+        const itemIndex = cart.items.findIndex((item) => item.product.toString() === productId);
 
         // if (cart.items[itemIndex]?.quantity) {
         //     if (
@@ -59,13 +55,9 @@ const addToCart = asyncWrapper(async (req, res, next) => {
     }
     await cart.save();
 
-    const updatedCart = await CartModel.findOne({ user: userId }).populate(
-        "items.product"
-    );
+    const updatedCart = await CartModel.findOne({ user: userId }).populate("items.product");
 
-    return res
-        .status(200)
-        .json({ success: httpStatusText.SUCCESS, data: updatedCart });
+    return res.status(200).json({ success: httpStatusText.SUCCESS, data: updatedCart });
 });
 
 const updateCartItem = asyncWrapper(async (req, res, next) => {
@@ -76,9 +68,7 @@ const updateCartItem = asyncWrapper(async (req, res, next) => {
     if (!cart) {
         return next(AppError.create("Cart Not Found"));
     }
-    const itemIndex = cart.items.findIndex(
-        (item) => item.product.toString() === productId
-    );
+    const itemIndex = cart.items.findIndex((item) => item.product.toString() === productId);
     if (itemIndex === -1) {
         return next(AppError.create("Product Not Found In Cart"));
     }
@@ -90,13 +80,9 @@ const updateCartItem = asyncWrapper(async (req, res, next) => {
     }
     await cart.save();
 
-    const updatedCart = await CartModel.findOne({ user: userId }).populate(
-        "items.product"
-    );
+    const updatedCart = await CartModel.findOne({ user: userId }).populate("items.product");
 
-    return res
-        .status(200)
-        .json({ success: httpStatusText.SUCCESS, data: updatedCart });
+    return res.status(200).json({ success: httpStatusText.SUCCESS, data: updatedCart });
 });
 
 const removeCartItem = asyncWrapper(async (req, res, next) => {
@@ -105,24 +91,16 @@ const removeCartItem = asyncWrapper(async (req, res, next) => {
     const cart = await CartModel.findOne({ user: userId });
 
     if (!cart) {
-        return next(
-            AppError.create("Cart Not Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Cart Not Found", 404, httpStatusText.FAIL));
     }
 
-    cart.items = cart.items.filter(
-        (item) => item.product.toString() !== productId
-    );
+    cart.items = cart.items.filter((item) => item.product.toString() !== productId);
 
     await cart.save();
 
-    const updatedCart = await CartModel.findOne({ user: userId }).populate(
-        "items.product"
-    );
+    const updatedCart = await CartModel.findOne({ user: userId }).populate("items.product");
 
-    return res
-        .status(200)
-        .json({ status: httpStatusText.SUCCESS, data: updatedCart });
+    return res.status(200).json({ status: httpStatusText.SUCCESS, data: updatedCart });
 });
 
 const clearCart = asyncWrapper(async (req, res, next) => {

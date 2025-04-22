@@ -10,9 +10,7 @@ const { s3Client } = require("../utils/s3.utils");
 const getCategories = asyncWrapper(async (req, res, next) => {
     const categories = await categoryModel.find({});
     if (!categories) {
-        return next(
-            AppError.create("No Categories Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("No Categories Found", 404, httpStatusText.FAIL));
     }
     return res.json({ status: httpStatusText.SUCCESS, data: { categories } });
 });
@@ -22,9 +20,7 @@ const addCategory = asyncWrapper(async (req, res, next) => {
     const oldCategory = await categoryModel.findOne({ name });
 
     if (oldCategory) {
-        return next(
-            AppError.create("Categorie Already Exist", 409, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Categorie Already Exist", 409, httpStatusText.FAIL));
     }
 
     await categoryModel.create({ name });
@@ -44,16 +40,14 @@ const deletCategory = asyncWrapper(async (req, res, next) => {
     if (!category) {
         await session.abortTransaction();
         session.endSession();
-        return next(
-            AppError.create("Categorie Not Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Categorie Not Found", 404, httpStatusText.FAIL));
     }
 
     await ProductModel.deleteMany(
         {
             category: categoryId,
         },
-        { session }
+        { session },
     );
 
     await categoryModel.findByIdAndDelete(categoryId).session(session);
@@ -72,9 +66,7 @@ const updateCategoryImage = asyncWrapper(async (req, res, next) => {
     const category = await categoryModel.findById(categoryId);
 
     if (!category) {
-        return next(
-            AppError.create("Category Not Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Category Not Found", 404, httpStatusText.FAIL));
     }
 
     const deleteCommand = new DeleteObjectCommand({
@@ -106,13 +98,7 @@ const updateCategoryImage = asyncWrapper(async (req, res, next) => {
         category.image = newImagePath;
         await category.save();
     } catch (error) {
-        return next(
-            AppError.create(
-                "Error uploading new image",
-                500,
-                httpStatusText.FAIL
-            )
-        );
+        return next(AppError.create("Error uploading new image", 500, httpStatusText.FAIL));
     }
 
     await res.status(200).json({

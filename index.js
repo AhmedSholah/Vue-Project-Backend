@@ -40,25 +40,25 @@ app.use("/api/settings", storeSettingsRoutes);
 
 // Not Found
 app.use("*", (req, res, next) => {
-  res.status(404).json({
-    status: httpStatusText.ERROR,
-    message: "Not Found.",
-    data: null,
-  });
+    res.status(404).json({
+        status: httpStatusText.ERROR,
+        message: "Not Found.",
+        data: null,
+    });
 });
 
 // Error Handling
 app.use((err, req, res, next) => {
-  res.status(err.statusCode || 500).json({
-    status: err.statusText || httpStatusText.ERROR,
-    message: err.message,
-    data: null,
-  });
+    res.status(err.statusCode || 500).json({
+        status: err.statusText || httpStatusText.ERROR,
+        message: err.message,
+        data: null,
+    });
 });
 
 connectToDB();
 app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`);
+    console.log(`Server is running on port: ${PORT}`);
 });
 
 module.exports = app;

@@ -10,15 +10,11 @@ const cartValidation = require("../utils/validation/cartValidation");
 router
     .route("/")
     .get(isAuthenticated, cartController.getCart)
-    .post(
-        isAuthenticated,
-        validateSchema(cartValidation.addToCartSchema),
-        cartController.addToCart
-    )
+    .post(isAuthenticated, validateSchema(cartValidation.addToCartSchema), cartController.addToCart)
     .patch(
         isAuthenticated,
         validateSchema(cartValidation.addToCartSchema),
-        cartController.updateCartItem
+        cartController.updateCartItem,
     );
 
 router.route("/clear").delete(isAuthenticated, cartController.clearCart);
@@ -28,7 +24,7 @@ router
     .delete(
         isAuthenticated,
         validateSchema(cartValidation.removeCartItemSchema, "params"),
-        cartController.removeCartItem
+        cartController.removeCartItem,
     );
 
 module.exports = router;

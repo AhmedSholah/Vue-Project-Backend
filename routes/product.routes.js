@@ -17,15 +17,12 @@ const upload = multer({ storage: storage });
 
 router
     .route("/")
-    .get(
-        validateSchema(getProductsSchema, "query"),
-        productsController.getProducts
-    )
+    .get(validateSchema(getProductsSchema, "query"), productsController.getProducts)
     .post(
         isAuthenticated,
         checkRole(["seller", "admin"]),
         validateSchema(addProductSchema),
-        productsController.addOneProduct
+        productsController.addOneProduct,
     );
 
 router
@@ -35,13 +32,13 @@ router
         isAuthenticated,
         checkRole(["seller", "admin"]),
         validateSchema(updateProductSchema),
-        productsController.updateOneProduct
+        productsController.updateOneProduct,
     )
     .delete(
         isAuthenticated,
         checkRole(["seller", "admin"]),
         validateSchema(deleteProductSchema, "params"),
-        productsController.deleteOneProduct
+        productsController.deleteOneProduct,
     );
 
 router
@@ -51,7 +48,7 @@ router
         checkRole(["seller", "admin"]),
         validateSchema(updateProductSchema),
         upload.single("file"),
-        productsController.addProductImage
+        productsController.addProductImage,
     );
 
 router
@@ -61,7 +58,7 @@ router
         checkRole(["seller", "admin"]),
         validateSchema(updateProductSchema),
         upload.single("file"),
-        productsController.deleteProductImage
+        productsController.deleteProductImage,
     );
 
 module.exports = router;
