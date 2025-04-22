@@ -11,19 +11,13 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const getAllUserOrders = asyncWrapper(async (req, res, next) => {
     const { userId } = req.tokenPayload;
 
-    const orders = await OrderModel.find({ user: userId }).populate(
-        "orderItems.product"
-    );
+    const orders = await OrderModel.find({ user: userId }).populate("orderItems.product");
 
     if (!orders) {
-        return next(
-            AppError.create("No Orders Found!", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("No Orders Found!", 404, httpStatusText.FAIL));
     }
 
-    return res
-        .status(200)
-        .json({ status: httpStatusText.SUCCESS, data: orders });
+    return res.status(200).json({ status: httpStatusText.SUCCESS, data: orders });
 });
 
 // =========================================================================
@@ -34,9 +28,7 @@ const createOrder = asyncWrapper(async (req, res, next) => {
 
     const user = await UserModel.findById(userId).select("email");
 
-    const cart = await CartModel.findOne({ user: userId }).populate(
-        "items.product"
-    );
+    const cart = await CartModel.findOne({ user: userId }).populate("items.product");
 
     if (!cart.items || cart.items.length == 0) {
         return next(AppError.create("Cart Is Empty"));
@@ -60,9 +52,7 @@ const createOrder = asyncWrapper(async (req, res, next) => {
         });
     }
 
-    const latestOrder = await OrderModel.findOne()
-        .sort({ createdAt: -1 })
-        .limit(1);
+    const latestOrder = await OrderModel.findOne().sort({ createdAt: -1 }).limit(1);
 
     const order = new OrderModel({
         user: userId,
@@ -135,9 +125,7 @@ const updateOrderStatus = asyncWrapper(async (req, res, next) => {
     const order = await OrderModel.findById(orderId);
 
     if (!order) {
-        return next(
-            AppError.create("No Orders Found!", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("No Orders Found!", 404, httpStatusText.FAIL));
     }
 
     order.orderStatus = orderStatus;
@@ -146,9 +134,7 @@ const updateOrderStatus = asyncWrapper(async (req, res, next) => {
 
     const updatedOrder = await OrderModel.findById(orderId, { __V: false });
 
-    return res
-        .status(200)
-        .json({ status: httpStatusText.SUCCESS, data: updatedOrder });
+    return res.status(200).json({ status: httpStatusText.SUCCESS, data: updatedOrder });
 });
 
 const getOrder = asyncWrapper(async (req, res, next) => {
@@ -161,9 +147,7 @@ const getOrder = asyncWrapper(async (req, res, next) => {
     }).populate("orderItems.product");
 
     if (!order) {
-        return next(
-            AppError.create("Order Not Found!", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Order Not Found!", 404, httpStatusText.FAIL));
     }
 
     return res.status(200).json({
@@ -176,14 +160,10 @@ const getAllOrders = asyncWrapper(async (req, res, next) => {
     const orders = await OrderModel.find({}).populate("orderItems.product");
 
     if (!orders) {
-        return next(
-            AppError.create("No Orders Found!", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("No Orders Found!", 404, httpStatusText.FAIL));
     }
 
-    return res
-        .status(200)
-        .json({ status: httpStatusText.SUCCESS, data: orders });
+    return res.status(200).json({ status: httpStatusText.SUCCESS, data: orders });
 });
 
 module.exports = {

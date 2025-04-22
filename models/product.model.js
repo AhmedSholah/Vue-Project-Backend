@@ -44,10 +44,7 @@ const productSchema = new mongoose.Schema(
         description: {
             type: String,
             required: true,
-            minlength: [
-                100,
-                "Description must be at least 100 characters long.",
-            ],
+            minlength: [100, "Description must be at least 100 characters long."],
             maxLength: [5000, "Description cannot exceed 5000 characters."],
         },
         views: {
@@ -91,14 +88,12 @@ const productSchema = new mongoose.Schema(
         timestamps: true,
         toJSON: { virtuals: true },
         toObject: { virtuals: true },
-    }
+    },
 );
 
 productSchema.virtual("priceAfterDiscount").get(function () {
     const calculatedPrice =
-        this.price -
-        this.discountAmount -
-        this.price * (this.discountPercentage / 100);
+        this.price - this.discountAmount - this.price * (this.discountPercentage / 100);
 
     return Math.max(calculatedPrice, 0);
 });
@@ -108,7 +103,7 @@ productSchema.virtual("images").get(function () {
         return [];
     }
     return this.imageNames.map(
-        (imageName) => `${process.env.AWS_S3_PUBLIC_BUCKET_URL}${imageName}`
+        (imageName) => `${process.env.AWS_S3_PUBLIC_BUCKET_URL}${imageName}`,
     );
 });
 

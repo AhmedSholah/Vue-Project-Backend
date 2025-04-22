@@ -9,7 +9,7 @@ const passwordSchema = z
     .regex(/[0-9]/, "Password must contain at least one number (0-9)")
     .regex(
         /[!@#$%^&*(),.?":{}|<>]/,
-        "Password must contain at least one special character (!, @, #, etc.)"
+        "Password must contain at least one special character (!, @, #, etc.)",
     )
     .refine((password) => !/\s/.test(password), {
         message: "Password must not contain spaces",

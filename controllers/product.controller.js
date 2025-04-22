@@ -45,9 +45,7 @@ const getProducts = asyncWrapper(async (req, res, next) => {
     const productsCount = await ProductModel.countDocuments(filter);
 
     // get highest priced product
-    const highestPricedProduct = await ProductModel.findOne()
-        .sort({ price: -1 })
-        .select("price");
+    const highestPricedProduct = await ProductModel.findOne().sort({ price: -1 }).select("price");
 
     // Return 4 products Randomly until fix it soon with best products according to views
     const total = await ProductModel.countDocuments();
@@ -59,9 +57,7 @@ const getProducts = asyncWrapper(async (req, res, next) => {
         .populate("soldBy", "_id firstName");
 
     if (!products) {
-        return next(
-            AppError.create("Product Not Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Product Not Found", 404, httpStatusText.FAIL));
     }
 
     return res.json({
@@ -81,9 +77,7 @@ const getOneProduct = asyncWrapper(async (req, res, next) => {
     }).populate({ path: "soldBy", select: "_id firstName" });
 
     if (!product) {
-        return next(
-            AppError.create("Product Not Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Product Not Found", 404, httpStatusText.FAIL));
     }
 
     return res.json({ status: httpStatusText.SUCCESS, data: { product } });
@@ -98,9 +92,7 @@ const addOneProduct = asyncWrapper(async (req, res, next) => {
     const categoryExists = await CategoryModel.findById(product.category);
 
     if (!categoryExists) {
-        return next(
-            AppError.create("Category Not Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Category Not Found", 404, httpStatusText.FAIL));
     }
 
     const proudct = await ProductModel.create(product);
@@ -117,9 +109,7 @@ const updateOneProduct = asyncWrapper(async (req, res, next) => {
     const oldProduct = await ProductModel.findById(productId);
 
     if (!oldProduct) {
-        return next(
-            AppError.create("Product Not Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Product Not Found", 404, httpStatusText.FAIL));
     }
 
     if (!(oldProduct.soldBy == req.tokenPayload.userId)) {
@@ -146,9 +136,7 @@ const deleteOneProduct = asyncWrapper(async (req, res, next) => {
     const product = await ProductModel.findById(productId);
 
     if (!product) {
-        return next(
-            AppError.create("Product not found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Product not found", 404, httpStatusText.FAIL));
     }
 
     const isAdmin = role === "admin";
@@ -173,9 +161,7 @@ const addProductImage = asyncWrapper(async (req, res, next) => {
     const product = await ProductModel.findById(productId);
 
     if (!product) {
-        return next(
-            AppError.create("Product not found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Product not found", 404, httpStatusText.FAIL));
     }
 
     const isAdmin = role === "admin";
@@ -214,13 +200,7 @@ const addProductImage = asyncWrapper(async (req, res, next) => {
         product.imageNames.push(newImagePath);
         await product.save();
     } catch (error) {
-        return next(
-            AppError.create(
-                "Error uploading new image",
-                500,
-                httpStatusText.FAIL
-            )
-        );
+        return next(AppError.create("Error uploading new image", 500, httpStatusText.FAIL));
     }
 
     await res.status(200).json({
@@ -238,9 +218,7 @@ const deleteProductImage = asyncWrapper(async (req, res, next) => {
     const product = await ProductModel.findById(productId);
 
     if (!product) {
-        return next(
-            AppError.create("Product not found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Product not found", 404, httpStatusText.FAIL));
     }
 
     const isAdmin = role === "admin";
@@ -253,9 +231,7 @@ const deleteProductImage = asyncWrapper(async (req, res, next) => {
     const imageToDelete = product.imageNames[imageIndex];
 
     if (!imageToDelete) {
-        return next(
-            AppError.create("Image not found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Image not found", 404, httpStatusText.FAIL));
     }
     const deleteCommand = new DeleteObjectCommand({
         Bucket: "main",
@@ -266,9 +242,7 @@ const deleteProductImage = asyncWrapper(async (req, res, next) => {
         product.imageNames.splice(imageIndex, 1);
         await product.save();
     } catch (error) {
-        return next(
-            AppError.create("Error deleting image", 500, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Error deleting image", 500, httpStatusText.FAIL));
     }
 
     return res.status(200).json({

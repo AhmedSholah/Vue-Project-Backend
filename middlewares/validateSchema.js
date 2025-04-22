@@ -24,11 +24,7 @@ function validateSchema(schema, validationTarget = "body") {
 
         if (!result.success) {
             return next(
-                AppError.create(
-                    `Invalid request ${validationTarget}`,
-                    400,
-                    httpStatusText.FAIL
-                )
+                AppError.create(`Invalid request ${validationTarget}`, 400, httpStatusText.FAIL),
             );
         }
 

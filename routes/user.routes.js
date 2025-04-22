@@ -20,11 +20,7 @@ const {
 router
     .route("/")
     .get(isAuthenticated, checkRole(["admin"]), getAllUsers)
-    .patch(
-        isAuthenticated,
-        validateSchema(userValidation.updateUserSchema),
-        updateUser
-    );
+    .patch(isAuthenticated, validateSchema(userValidation.updateUserSchema), updateUser);
 
 // For Admin Use
 // router
@@ -34,8 +30,6 @@ router
 
 router.route("/me/user").get(isAuthenticated, getCurrentUser);
 
-router
-    .route("/me/avatar")
-    .put(isAuthenticated, upload.single("file"), updateAvatar);
+router.route("/me/avatar").put(isAuthenticated, upload.single("file"), updateAvatar);
 
 module.exports = router;

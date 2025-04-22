@@ -8,14 +8,12 @@ router
     .get(isAuthenticated, orderController.getAllUserOrders)
     .post(isAuthenticated, orderController.createOrder);
 
-router
-    .route("/admin")
-    .get(isAuthenticated, checkRole(["admin"]), orderController.getAllOrders);
+router.route("/admin").get(isAuthenticated, checkRole(["admin"]), orderController.getAllOrders);
 
 router.route("/:orderId").get(isAuthenticated, orderController.getOrder).patch(
     isAuthenticated,
     // checkRole(["", "seller", "admin"]),
-    orderController.updateOrderStatus
+    orderController.updateOrderStatus,
 );
 // .delete(isAuthenticated, deleteOrder);
 

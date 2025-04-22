@@ -13,19 +13,16 @@ const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
-    process.env.REDIRECT_URI
+    process.env.REDIRECT_URI,
 );
 
 const register = asyncWrapper(async function (req, res, next) {
-    const { firstName, lastName, email, password, image, gender, role } =
-        req.body;
+    const { firstName, lastName, email, password, image, gender, role } = req.body;
 
     const oldUser = await UserModel.findOne({ email });
 
     if (oldUser) {
-        return next(
-            AppError.create("User Already Exists", 409, httpStatusText.FAIL)
-        );
+        return next(AppError.create("User Already Exists", 409, httpStatusText.FAIL));
     }
 
     await UserModel.validate(req.body);
@@ -60,19 +57,12 @@ const login = asyncWrapper(async (req, res, next) => {
     const foundUser = await UserModel.findOne({ email });
 
     if (!foundUser) {
-        return next(
-            AppError.create("User Not Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("User Not Found", 404, httpStatusText.FAIL));
     }
 
-    const isCorretPassword = await bcryptjs.compare(
-        password,
-        foundUser.password
-    );
+    const isCorretPassword = await bcryptjs.compare(password, foundUser.password);
     if (!isCorretPassword) {
-        return next(
-            AppError.create("Invalid Credentials", 501, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Invalid Credentials", 501, httpStatusText.FAIL));
     }
 
     const tokenPayload = {
@@ -82,9 +72,7 @@ const login = asyncWrapper(async (req, res, next) => {
 
     const token = await generateJWT(tokenPayload);
 
-    return res
-        .status(200)
-        .json({ status: httpStatusText.SUCCESS, data: { token } });
+    return res.status(200).json({ status: httpStatusText.SUCCESS, data: { token } });
 });
 
 const google = asyncWrapper(async (req, res, next) => {

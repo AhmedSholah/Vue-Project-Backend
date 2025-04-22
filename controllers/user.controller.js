@@ -8,30 +8,19 @@ const httpStatusText = require("../utils/httpStatusText");
 const getAllUsers = asyncWrapper(async (req, res, next) => {
     const users = await UserModel.find({}, { __v: false, password: false });
     if (!users) {
-        return next(
-            AppError.create("No Users Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("No Users Found", 404, httpStatusText.FAIL));
     }
-    return res
-        .status(200)
-        .json({ status: httpStatusText.SUCCESS, data: { users } });
+    return res.status(200).json({ status: httpStatusText.SUCCESS, data: { users } });
 });
 
 // For Admin Use
 const getUser = asyncWrapper(async (req, res, next) => {
     const id = req.params.id;
-    const user = await UserModel.findOne(
-        { _id: id },
-        { __v: false, password: false }
-    );
+    const user = await UserModel.findOne({ _id: id }, { __v: false, password: false });
     if (!user) {
-        return next(
-            AppError.create("User Not Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("User Not Found", 404, httpStatusText.FAIL));
     }
-    return res
-        .status(200)
-        .json({ status: httpStatusText.SUCCESS, data: { user } });
+    return res.status(200).json({ status: httpStatusText.SUCCESS, data: { user } });
 });
 
 // For Current User Use
@@ -42,13 +31,9 @@ const getCurrentUser = asyncWrapper(async (req, res, next) => {
         password: false,
     });
     if (!currentUser) {
-        return next(
-            AppError.create("User Not Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("User Not Found", 404, httpStatusText.FAIL));
     }
-    return res
-        .status(200)
-        .json({ status: httpStatusText.SUCCESS, data: { currentUser } });
+    return res.status(200).json({ status: httpStatusText.SUCCESS, data: { currentUser } });
 });
 
 const updateUser = asyncWrapper(async (req, res, next) => {
@@ -59,9 +44,7 @@ const updateUser = asyncWrapper(async (req, res, next) => {
     const user = await UserModel.findById(userId, { email: true });
 
     if (isEmailRegistered && !(user.email === body.email)) {
-        return next(
-            AppError.create("Email Already Exist", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Email Already Exist", 404, httpStatusText.FAIL));
     }
 
     const updatedUser = await UserModel.findByIdAndUpdate(userId, body, {
@@ -70,14 +53,10 @@ const updateUser = asyncWrapper(async (req, res, next) => {
     }).select("-__v -password");
 
     if (!updatedUser) {
-        return next(
-            AppError.create("User Not Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("User Not Found", 404, httpStatusText.FAIL));
     }
 
-    return res
-        .status(200)
-        .json({ status: httpStatusText.SUCCESS, data: updatedUser });
+    return res.status(200).json({ status: httpStatusText.SUCCESS, data: updatedUser });
 });
 
 const deleteUser = asyncWrapper(async (req, res, next) => {
@@ -87,9 +66,7 @@ const deleteUser = asyncWrapper(async (req, res, next) => {
         password: false,
     });
     if (!user) {
-        return next(
-            AppError.create("User Not Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("User Not Found", 404, httpStatusText.FAIL));
     }
 
     await user.remove();
@@ -102,9 +79,7 @@ const updateAvatar = asyncWrapper(async (req, res, next) => {
     const user = await UserModel.findById(userId);
 
     if (!user) {
-        return next(
-            AppError.create("User Not Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("User Not Found", 404, httpStatusText.FAIL));
     }
 
     const deleteCommand = new DeleteObjectCommand({
@@ -118,9 +93,7 @@ const updateAvatar = asyncWrapper(async (req, res, next) => {
         } catch (error) {}
     }
 
-    const newAvatarPath = `users/${userId}/avatar-${Date.now()}.${
-        req.file.mimetype.split("/")[1]
-    }`;
+    const newAvatarPath = `users/${userId}/avatar-${Date.now()}.${req.file.mimetype.split("/")[1]}`;
 
     const params = {
         Bucket: "main",
@@ -136,13 +109,7 @@ const updateAvatar = asyncWrapper(async (req, res, next) => {
         user.avatar = newAvatarPath;
         await user.save();
     } catch (error) {
-        return next(
-            AppError.create(
-                "Error uploading new avatar",
-                500,
-                httpStatusText.FAIL
-            )
-        );
+        return next(AppError.create("Error uploading new avatar", 500, httpStatusText.FAIL));
     }
 
     await res.status(200).json({
