@@ -16,6 +16,7 @@ const userRoutes = require("./routes/user.routes");
 const orderRoutes = require("./routes/order.routes");
 const storageRoutes = require("./routes/storage.routes");
 const stripeWebhookRoutes = require("./routes/stripeWebhook.routes");
+const KPIsRoutes = require("./routes/KPIs.routes");
 
 // Middleware
 app.use(cors());
@@ -33,28 +34,29 @@ app.use("/api/favorite", favoriteRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/storage", storageRoutes);
+app.use("/api/dashboard/kpis", KPIsRoutes);
 
 // Not Found
 app.use("*", (req, res, next) => {
-    res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: "Not Found.",
-        data: null,
-    });
+  res.status(404).json({
+    status: httpStatusText.ERROR,
+    message: "Not Found.",
+    data: null,
+  });
 });
 
 // Error Handling
 app.use((err, req, res, next) => {
-    res.status(err.statusCode || 500).json({
-        status: err.statusText || httpStatusText.ERROR,
-        message: err.message,
-        data: null,
-    });
+  res.status(err.statusCode || 500).json({
+    status: err.statusText || httpStatusText.ERROR,
+    message: err.message,
+    data: null,
+  });
 });
 
 connectToDB();
 app.listen(PORT, () => {
-    console.log(`Server is running on port: ${PORT}`);
+  console.log(`Server is running on port: ${PORT}`);
 });
 
 module.exports = app;
