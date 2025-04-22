@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongooseDelete = require("mongoose-delete");
 
 const categorySchema = new mongoose.Schema(
     {
@@ -28,6 +29,11 @@ categorySchema.virtual("imageUrl").get(function () {
     } else {
         return null;
     }
+});
+
+categorySchema.plugin(mongooseDelete, {
+    deletedAt: true,
+    overrideMethods: "all",
 });
 
 const Category = mongoose.model("Category", categorySchema);

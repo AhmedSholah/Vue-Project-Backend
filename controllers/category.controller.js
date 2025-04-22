@@ -40,20 +40,17 @@ const deletCategory = asyncWrapper(async (req, res, next) => {
     if (!category) {
         await session.abortTransaction();
         session.endSession();
-        return next(AppError.create("Categorie Not Found", 404, httpStatusText.FAIL));
+        return next(AppError.create("Category Not Found", 404, httpStatusText.FAIL));
     }
 
-    await ProductModel.deleteMany(
-        {
-            category: categoryId,
-        },
-        { session },
-    );
+    await ProductModel.delete({ category: categoryId }, { session });
 
-    await categoryModel.findByIdAndDelete(categoryId).session(session);
+    await category.delete({ session });
+
     await session.commitTransaction();
     session.endSession();
 
+    // Send a response indicating success
     return res.json({
         status: httpStatusText.SUCCESS,
         data: null,

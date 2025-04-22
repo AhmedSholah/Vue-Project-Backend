@@ -64,6 +64,8 @@ const login = asyncWrapper(async (req, res, next) => {
         return next(AppError.create("Invalid Credentials", 501, httpStatusText.FAIL));
     }
 
+    console.log(foundUser.role);
+
     const tokenPayload = {
         userId: foundUser._id,
         role: foundUser.role,

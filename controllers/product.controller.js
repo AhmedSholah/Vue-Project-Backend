@@ -146,7 +146,7 @@ const deleteOneProduct = asyncWrapper(async (req, res, next) => {
         return next(AppError.create("Unauthorized", 401, httpStatusText.FAIL));
     }
 
-    await ProductModel.findByIdAndDelete(productId);
+    await product.delete();
 
     return res.status(200).json({
         status: httpStatusText.SUCCESS,

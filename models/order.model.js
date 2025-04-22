@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongooseDelete = require("mongoose-delete");
 
 const orderSchema = new mongoose.Schema(
     {
@@ -55,6 +56,11 @@ const orderSchema = new mongoose.Schema(
     },
     { timestamps: true },
 );
+
+orderSchema.plugin(mongooseDelete, {
+    deletedAt: true,
+    overrideMethods: "all",
+});
 
 const Order = mongoose.model("Order", orderSchema);
 
