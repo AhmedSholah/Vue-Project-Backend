@@ -124,6 +124,7 @@ const userSchema = new mongoose.Schema(
       //     return defaultRole?._id;
       // },
       // required: true,
+
     },
     // role: {
     //     type: String,
