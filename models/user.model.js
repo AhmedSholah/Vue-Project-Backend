@@ -115,16 +115,16 @@ const userSchema = new mongoose.Schema(
             type: String,
             enum: ["male", "female"],
         },
-        role: {
-            // type: mongoose.Schema.Types.ObjectId,
-            // ref: "Role",
-            // default: async function () {
-            //     const Role = require("./role.model");
-            //     const defaultRole = await Role.findOne({ name: "customer" });
-            //     return defaultRole?._id;
-            // },
-            // required: true,
-        },
+        // role: {
+        // type: mongoose.Schema.Types.ObjectId,
+        // ref: "Role",
+        // default: async function () {
+        //     const Role = require("./role.model");
+        //     const defaultRole = await Role.findOne({ name: "customer" });
+        //     return defaultRole?._id;
+        // },
+        // required: true,
+        // },
         // role: {
         //     type: String,
         //     enum: ["customer", "seller", "admin", "super-admin"],
@@ -136,6 +136,19 @@ const userSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
+        segments: [
+            {
+                type: String,
+                enum: [
+                    "new_customer",
+                    "premium_user",
+                    "high_spender",
+                    "frequent_buyer",
+                    "inactive",
+                    "vip",
+                ],
+            },
+        ],
         isDeleted: {
             type: Boolean,
             default: false,
