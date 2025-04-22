@@ -78,9 +78,19 @@ const productSchema = new mongoose.Schema(
                 estimatedDelivery: { type: Number, min: 0, required: true },
             },
         },
-        tags: {
-            type: [String],
-        },
+        tags: [
+            {
+                type: String,
+                enum: [
+                    "new_arrival",
+                    "sale",
+                    "eco_friendly",
+                    "limited_edition",
+                    "handmade",
+                    "bestseller",
+                ],
+            },
+        ],
         soldBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
