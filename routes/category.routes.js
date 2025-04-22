@@ -18,7 +18,7 @@ router
         isAuthenticated,
         validateSchema(categorySchema.addCategorySchema),
         checkRole(["admin"]),
-        categoryController.addCategory
+        categoryController.addCategory,
     );
 // .patch(updateCategory)
 
@@ -28,7 +28,7 @@ router
         isAuthenticated,
         checkRole(["admin"]),
         validateSchema(categorySchema.deletCategorySchema, "params"),
-        categoryController.deletCategory
+        categoryController.deletCategory,
     );
 
 router
@@ -37,7 +37,7 @@ router
         isAuthenticated,
         checkRole(["admin"]),
         upload.single("file"),
-        categoryController.updateCategoryImage
+        categoryController.updateCategoryImage,
     );
 
 module.exports = router;

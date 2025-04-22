@@ -10,7 +10,7 @@ router
     .post(
         isAuthenticated,
         validateSchema(favoriteValidation.favoriteSchema),
-        favoriteController.addToFavoriteItem
+        favoriteController.addToFavoriteItem,
     );
 
 router
@@ -18,7 +18,7 @@ router
     .delete(
         isAuthenticated,
         validateSchema(favoriteValidation.favoriteSchema, "params"),
-        favoriteController.deleteFavoriteItem
+        favoriteController.deleteFavoriteItem,
     );
 
 module.exports = router;
