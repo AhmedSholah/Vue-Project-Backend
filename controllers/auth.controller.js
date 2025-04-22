@@ -17,7 +17,7 @@ const client = new OAuth2Client(
 );
 
 const register = asyncWrapper(async function (req, res, next) {
-    const { firstName, lastName, email, password, image, gender, role } = req.body;
+    const { name, email, password, image, gender, role } = req.body;
 
     const oldUser = await UserModel.findOne({ email });
 
@@ -30,8 +30,7 @@ const register = asyncWrapper(async function (req, res, next) {
     const hashedPassword = await bcryptjs.hash(password, 12);
 
     const newUser = await UserModel.create({
-        firstName,
-        lastName,
+        name,
         email,
         password: hashedPassword,
         image: "",
@@ -111,8 +110,7 @@ const googleCallback = asyncWrapper(async (req, res, next) => {
             token = await generateJWT(tokenPayload);
         } else {
             const newUser = await UserModel.create({
-                firstName: name.split(" ")[0],
-                lastName: name.split(" ")[1],
+                name: name.split(" ")[0] + name.split(" ")[1],
                 email,
                 provider: "google",
                 avatar: picture,

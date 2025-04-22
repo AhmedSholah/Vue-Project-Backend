@@ -36,7 +36,7 @@ const getProducts = asyncWrapper(async (req, res, next) => {
     }
 
     const products = await ProductModel.find(filter, { __v: false })
-        .populate({ path: "soldBy", select: "_id firstName" })
+        .populate({ path: "soldBy", select: "_id name" })
         .sort({ [query.sortBy]: query.sortOrder })
         .skip(skip)
         .limit(limit);
@@ -54,7 +54,7 @@ const getProducts = asyncWrapper(async (req, res, next) => {
     const bestSellingProducts = await ProductModel.find({}, { __v: 0 })
         .skip(randomSkip)
         .limit(4)
-        .populate("soldBy", "_id firstName");
+        .populate("soldBy", "_id name");
 
     if (!products) {
         return next(AppError.create("Product Not Found", 404, httpStatusText.FAIL));
@@ -74,7 +74,7 @@ const getProducts = asyncWrapper(async (req, res, next) => {
 const getOneProduct = asyncWrapper(async (req, res, next) => {
     const product = await ProductModel.findById(req.params.productId, {
         __v: false,
-    }).populate({ path: "soldBy", select: "_id firstName" });
+    }).populate({ path: "soldBy", select: "_id name" });
 
     if (!product) {
         return next(AppError.create("Product Not Found", 404, httpStatusText.FAIL));

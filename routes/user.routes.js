@@ -19,13 +19,19 @@ const {
 
 router
     .route("/")
-    .get(isAuthenticated, checkRole(["admin"]), getAllUsers)
+    .get(
+        isAuthenticated,
+        //  checkRole(["admin"]),
+        getAllUsers,
+    )
     .patch(isAuthenticated, validateSchema(userValidation.updateUserSchema), updateUser);
 
 // For Admin Use
-// router
-//     .route("/:id")
-//     .get(isAuthenticated, checkRole(["admin"]), getUser)
+router.route("/:id").get(
+    isAuthenticated,
+    // checkRole(["admin"]),
+    getUser,
+);
 //     .delete(isAuthenticated, deleteUser);
 
 router.route("/me/user").get(isAuthenticated, getCurrentUser);
