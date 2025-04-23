@@ -18,6 +18,8 @@ const storageRoutes = require("./routes/storage.routes");
 const stripeWebhookRoutes = require("./routes/stripeWebhook.routes");
 const KPIsRoutes = require("./routes/KPIs.routes");
 const storeSettingsRoutes = require("./routes/storeSettings.routes");
+const roleRoutes = require("./routes/role.routes");
+const permissionRoutes = require("./routes/permission.routes");
 
 // Middleware
 app.use(cors());
@@ -37,6 +39,8 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/storage", storageRoutes);
 app.use("/api/dashboard/kpis", KPIsRoutes);
 app.use("/api/settings", storeSettingsRoutes);
+app.use("/api/roles", roleRoutes);
+app.use("/api/permissions", permissionRoutes);
 
 // Not Found
 app.use("*", (req, res, next) => {

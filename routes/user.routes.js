@@ -24,7 +24,11 @@ router
         //  checkRole(["admin"]),
         getAllUsers,
     )
-    .patch(isAuthenticated, validateSchema(userValidation.updateUserSchema), updateUser);
+    .patch(
+        isAuthenticated,
+        // validateSchema(userValidation.updateUserSchema)
+        updateUser,
+    );
 
 // For Admin Use
 router
