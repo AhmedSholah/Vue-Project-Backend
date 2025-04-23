@@ -7,6 +7,7 @@ const bcryptjs = require("bcryptjs");
 const generateJWT = require("../utils/generateJWT");
 const CartModel = require("../models/cart.model");
 const FavoriteModel = require("../models/favorite.model");
+const Role = require("../models/role.model");
 
 const { OAuth2Client } = require("google-auth-library");
 
@@ -17,7 +18,7 @@ const client = new OAuth2Client(
 );
 
 const register = asyncWrapper(async function (req, res, next) {
-    const { name, email, password, image, gender, role } = req.body;
+    const { name, email, password, image, gender } = req.body;
 
     const oldUser = await UserModel.findOne({ email });
 
@@ -29,21 +30,25 @@ const register = asyncWrapper(async function (req, res, next) {
 
     const hashedPassword = await bcryptjs.hash(password, 12);
 
+    const defaultRole = await Role.findOne({ name: "customer" }).populate("permissions", "code");
+    const defaultRoleId = defaultRole?._id;
+    const permissions = defaultRole?.permissions.map((p) => p.code);
+
     const newUser = await UserModel.create({
         name,
         email,
         password: hashedPassword,
         image: "",
         gender,
-        role,
+        role: defaultRoleId,
     });
 
-    await CartModel.create({ user: newUser._id });
-    await FavoriteModel.create({ userId: newUser._id });
+    // await CartModel.create({ user: newUser._id });
+    // await FavoriteModel.create({ userId: newUser._id });
 
     const tokenPayload = {
         userId: newUser._id,
-        role,
+        permissions,
     };
 
     const token = await generateJWT(tokenPayload);
@@ -53,7 +58,7 @@ const register = asyncWrapper(async function (req, res, next) {
 
 const login = asyncWrapper(async (req, res, next) => {
     const { email, password } = req.body;
-    const foundUser = await UserModel.findOne({ email });
+    const foundUser = await UserModel.findOne({ email }).populate("permissions", "code");
 
     if (!foundUser) {
         return next(AppError.create("User Not Found", 404, httpStatusText.FAIL));
@@ -64,11 +69,15 @@ const login = asyncWrapper(async (req, res, next) => {
         return next(AppError.create("Invalid Credentials", 501, httpStatusText.FAIL));
     }
 
-    console.log(foundUser.role);
+    const defaultRole = await Role.findById(foundUser.role).populate("permissions", "code");
+    const rolePermissions = defaultRole?.permissions.map((p) => p.code);
+    const userExtraPermissions = foundUser?.permissions.map((p) => p.code);
+
+    const permissions = [...rolePermissions, ...userExtraPermissions];
 
     const tokenPayload = {
         userId: foundUser._id,
-        role: foundUser.role,
+        permissions,
     };
 
     const token = await generateJWT(tokenPayload);
@@ -106,7 +115,7 @@ const googleCallback = asyncWrapper(async (req, res, next) => {
         if (foundUser) {
             const tokenPayload = {
                 userId: foundUser._id,
-                role: foundUser.role,
+                // role: foundUser.role,
             };
 
             token = await generateJWT(tokenPayload);
@@ -116,12 +125,12 @@ const googleCallback = asyncWrapper(async (req, res, next) => {
                 email,
                 provider: "google",
                 avatar: picture,
-                role: "client",
+                // role: "client",
             });
 
             const tokenPayload = {
                 id: newUser._id,
-                role: newUser.role,
+                // role: newUser.role,
             };
             token = await generateJWT(tokenPayload);
         }

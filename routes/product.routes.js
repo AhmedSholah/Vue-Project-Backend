@@ -9,6 +9,7 @@ const {
     updateProductSchema,
     addProductSchema,
 } = require("../utils/validation/productValidation");
+const checkPermission = require("../middlewares/checkPermission");
 
 const multer = require("multer");
 
@@ -20,7 +21,8 @@ router
     .get(validateSchema(getProductsSchema, "query"), productsController.getProducts)
     .post(
         isAuthenticated,
-        checkRole(["seller", "admin"]),
+        // checkRole(["seller", "admin"]),
+        checkPermission("create_product"),
         validateSchema(addProductSchema),
         productsController.addOneProduct,
     );

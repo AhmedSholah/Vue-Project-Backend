@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const mongooseDelete = require("mongoose-delete");
+const Role = require("../models/role.model");
 
 const userSchema = new mongoose.Schema(
     {
@@ -78,22 +79,10 @@ const userSchema = new mongoose.Schema(
             enum: ["male", "female"],
         },
         role: {
-            // type: mongoose.Schema.Types.ObjectId,
-            // ref: "Role",
-            // default: async function () {
-            //     const Role = require("./role.model");
-            //     const defaultRole = await Role.findOne({ name: "customer" });
-            //     return defaultRole?._id;
-            // },
-            // required: true,
-            // },
-            // role: {
-            //     type: String,
-            //     enum: ["customer", "seller", "admin", "super-admin"],
-            //     default: "customer",
-            //     required: true,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Role",
         },
-        // permissions: { type: [String], enum: [] },
+        permissions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Permission" }],
         wallet: {
             type: Number,
             default: 0,
@@ -128,6 +117,15 @@ userSchema.virtual("avatarUrl").get(function () {
         return null;
     }
 });
+
+// userSchema.pre("save", async function (next) {
+//     if (!this.role) {
+//         const defaultRole = await Role.findOne({ name: "customer" });
+//         console.log(defaultRole);
+//         this.role = defaultRole?._id;
+//     }
+//     next();
+// });
 
 userSchema.plugin(mongooseDelete, {
     deletedAt: true,
