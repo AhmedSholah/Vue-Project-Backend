@@ -83,27 +83,75 @@ const getOneProduct = asyncWrapper(async (req, res, next) => {
     return res.json({ status: httpStatusText.SUCCESS, data: { product } });
 });
 
-// Add One Product (Seller - Admin)
+// // Add One Product (Seller - Admin)
+// const addOneProduct = asyncWrapper(async (req, res, next) => {
+//     const product = req.body;
+//     product.soldBy = req.tokenPayload.userId;
+
+//     // check if category exists or not
+//     const categoryExists = await CategoryModel.findById(product.category);
+
+//     if (!categoryExists) {
+//         return next(AppError.create("Category Not Found", 404, httpStatusText.FAIL));
+//     }
+
+//     const proudct = await ProductModel.create(product);
+
+//     return res.json({
+//         status: httpStatusText.SUCCESS,
+//         data: { message: "Product created successfully.", id: proudct._id },
+//     });
+// });
 const addOneProduct = asyncWrapper(async (req, res, next) => {
-    const product = req.body;
+    const product = { ...req.body };
     product.soldBy = req.tokenPayload.userId;
 
-    // check if category exists or not
+    // Validate category
     const categoryExists = await CategoryModel.findById(product.category);
-
     if (!categoryExists) {
         return next(AppError.create("Category Not Found", 404, httpStatusText.FAIL));
     }
 
-    const proudct = await ProductModel.create(product);
+    // Ensure colors are unique and lowercase (if provided)
+    if (product.colors && Array.isArray(product.colors)) {
+        product.colors = [...new Set(product.colors.map((color) => color.toLowerCase()))];
+    }
+
+    const createdProduct = await ProductModel.create(product);
 
     return res.json({
         status: httpStatusText.SUCCESS,
-        data: { message: "Product created successfully.", id: proudct._id },
+        data: {
+            message: "Product created successfully.",
+            id: createdProduct._id,
+        },
     });
 });
 
-// Update One Product (Seller that add the product - Admin)
+// // Update One Product (Seller that add the product - Admin)
+// const updateOneProduct = asyncWrapper(async (req, res, next) => {
+//     const productId = req.params.productId;
+//     const oldProduct = await ProductModel.findById(productId);
+
+//     if (!oldProduct) {
+//         return next(AppError.create("Product Not Found", 404, httpStatusText.FAIL));
+//     }
+
+//     if (!(oldProduct.soldBy == req.tokenPayload.userId)) {
+//         return next(AppError.create("Unauthorized", 401, httpStatusText.FAIL));
+//     }
+
+//     const product = req.body;
+
+//     await ProductModel.updateOne({ _id: productId }, { $set: product });
+
+//     const updatedProduct = await ProductModel.findById(productId);
+
+//     return res.status(200).json({
+//         status: httpStatusText.SUCCESS,
+//         data: updatedProduct,
+//     });
+// });
 const updateOneProduct = asyncWrapper(async (req, res, next) => {
     const productId = req.params.productId;
     const oldProduct = await ProductModel.findById(productId);
@@ -112,11 +160,15 @@ const updateOneProduct = asyncWrapper(async (req, res, next) => {
         return next(AppError.create("Product Not Found", 404, httpStatusText.FAIL));
     }
 
-    if (!(oldProduct.soldBy == req.tokenPayload.userId)) {
-        return next(AppError.create("Unauthorized", 401, httpStatusText.FAIL));
-    }
+    // if (oldProduct.soldBy.toString() !== req.tokenPayload.userId) {
+    //     return next(AppError.create("Unauthorized", 401, httpStatusText.FAIL));
+    // }
 
-    const product = req.body;
+    const product = { ...req.body };
+
+    if (product.colors && Array.isArray(product.colors)) {
+        product.colors = [...new Set(product.colors.map((color) => color.toLowerCase()))];
+    }
 
     await ProductModel.updateOne({ _id: productId }, { $set: product });
 

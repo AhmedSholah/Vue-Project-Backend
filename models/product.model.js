@@ -26,6 +26,10 @@ const productSchema = new mongoose.Schema(
                 // required: true,
             },
         ],
+        colors: {
+            type: [String],
+            default: ["red", "green", "yellow", "blue", "pink"],
+        },
         discountAmount: {
             type: Number,
             default: 0,
