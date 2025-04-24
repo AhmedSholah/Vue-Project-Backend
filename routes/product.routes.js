@@ -32,8 +32,8 @@ router
     .get(productsController.getOneProduct)
     .patch(
         isAuthenticated,
-        checkRole(["seller", "admin"]),
-        validateSchema(updateProductSchema),
+        // checkRole(["seller", "admin"]),
+        // validateSchema(updateProductSchema),
         productsController.updateOneProduct,
     )
     .delete(
