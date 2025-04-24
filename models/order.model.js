@@ -52,6 +52,10 @@ const orderSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
+        simulatedCreatedAt: {
+            type: Date,
+            default: Date.now(),
+        },
         deliveredAt: Date,
     },
     { timestamps: true },
