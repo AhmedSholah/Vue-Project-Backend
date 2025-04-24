@@ -18,7 +18,7 @@ const client = new OAuth2Client(
 );
 
 const register = asyncWrapper(async function (req, res, next) {
-    const { name, email, password, image, gender } = req.body;
+    const { name, email, password, image, gender, segments } = req.body;
 
     const oldUser = await UserModel.findOne({ email });
 
@@ -41,6 +41,7 @@ const register = asyncWrapper(async function (req, res, next) {
         image: "",
         gender,
         role: defaultRoleId,
+        segments,
     });
 
     // await CartModel.create({ user: newUser._id });

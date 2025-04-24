@@ -20,7 +20,7 @@ const {
 router
     .route("/")
     .get(
-        isAuthenticated,
+        // isAuthenticated,
         //  checkRole(["admin"]),
         getAllUsers,
     )

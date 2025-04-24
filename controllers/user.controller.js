@@ -5,18 +5,44 @@ const UserModel = require("../models/user.model");
 const AppError = require("../utils/AppError");
 const httpStatusText = require("../utils/httpStatusText");
 const APIFeatures = require("../utils/apiFeatures");
+const Role = require("../models/role.model");
 
+// const getAllUsers = asyncWrapper(async (req, res, next) => {
+//     // const users = await UserModel.find({}, { __v: false, password: false });
+//     // if (!users) {
+//     //     return next(
+//     //         AppError.create("No Users Found", 404, httpStatusText.FAIL)
+//     //     );
+//     // }
+//     // return res
+//     //     .status(200)
+//     //     .json({ status: httpStatusText.SUCCESS, data: { users } });
+//     const features = new APIFeatures(UserModel.find({}, { __v: false, password: false }), req.query)
+//         .filter()
+//         .sort()
+//         .limitFields()
+//         .paginate();
+
+//     const users = await features.query;
+
+//     if (!users || users.length === 0) {
+//         return next(AppError.create("No Users Found", 404, httpStatusText.FAIL));
+//     }
+
+//     return res.status(200).json({ status: httpStatusText.SUCCESS, data: { users } });
+// });
 const getAllUsers = asyncWrapper(async (req, res, next) => {
-    // const users = await UserModel.find({}, { __v: false, password: false });
-    // if (!users) {
-    //     return next(
-    //         AppError.create("No Users Found", 404, httpStatusText.FAIL)
-    //     );
-    // }
-    // return res
-    //     .status(200)
-    //     .json({ status: httpStatusText.SUCCESS, data: { users } });
-    const features = new APIFeatures(UserModel.find({}, { __v: false, password: false }), req.query)
+    const queryObj = { ...req.query };
+
+    if (queryObj.role) {
+        const roleDoc = await Role.findOne({ name: queryObj.role });
+        if (!roleDoc) {
+            return next(AppError.create("Role not found", 404, httpStatusText.FAIL));
+        }
+        queryObj.role = roleDoc._id.toString();
+    }
+
+    const features = new APIFeatures(UserModel.find({}, { __v: false, password: false }), queryObj)
         .filter()
         .sort()
         .limitFields()
