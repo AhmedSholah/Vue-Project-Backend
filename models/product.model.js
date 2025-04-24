@@ -62,6 +62,10 @@ const productSchema = new mongoose.Schema(
             required: true,
             min: 0,
         },
+        simulatedCreatedAt: {
+            type: Date,
+            default: Date.now(),
+        },
         // weight: {
         //     type: Number,
         //     required: true,

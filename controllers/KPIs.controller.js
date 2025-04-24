@@ -5,15 +5,14 @@ const asyncWrapper = require("../middlewares/asyncWrapper");
 const AppError = require("../utils/AppError");
 const httpStatusText = require("../utils/httpStatusText");
 
-// GET /api/dashboard/kpis?start=2025-04-01&end=2025-04-22
+// GET /api/dashboard/kpis?start=2022-01-01&end=2022-12-31&useSimulated=true
 
 const getKPIs = asyncWrapper(async (req, res, next) => {
-    const { start, end } = req.query;
-
-    // Construct date filter if both dates are provided
+    const { start, end, useSimulated } = req.query;
+    const dateField = useSimulated === "true" ? "simulatedCreatedAt" : "createdAt";
     const dateFilter = {};
     if (start && end) {
-        dateFilter.createdAt = {
+        dateFilter[dateField] = {
             $gte: new Date(start),
             $lte: new Date(end),
         };
