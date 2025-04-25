@@ -91,19 +91,17 @@ const userSchema = new mongoose.Schema(
             type: Date,
             default: Date.now(),
         },
-        segments: [
-            {
-                type: String,
-                enum: [
-                    "new_customer",
-                    "premium_user",
-                    "high_spender",
-                    "frequent_buyer",
-                    "inactive",
-                    "vip",
-                ],
-            },
-        ],
+        segments: {
+            type: String,
+            enum: [
+                "new_customer",
+                "premium_user",
+                "high_spender",
+                "frequent_buyer",
+                "inactive",
+                "vip",
+            ],
+        },
     },
     {
         timestamps: true,
