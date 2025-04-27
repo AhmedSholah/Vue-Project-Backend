@@ -7,70 +7,147 @@ const AppError = require("../utils/AppError");
 const { PutObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { s3Client } = require("../utils/s3.utils");
 const FavoriteModel = require("../models/favorite.model");
+const APIFeatures = require("../utils/apiFeatures");
+const Product = require("../models/product.model");
+
+//api/products?name=productName&category=categoryName&instock=true&tag=bestseller&colors=red,blue&price[gte]=500&price[lte]=1500&sort=-price&fields=name,price,colors,category
 
 const getProducts = asyncWrapper(async (req, res, next) => {
-    const query = req.query;
-    const limit = query.limit || 4;
-    const page = query.page || 1;
-    const skip = (page - 1) * limit;
+    const queryObj = { ...req.query };
 
-    const filter = {};
+    const customFilter = {};
 
-    if (query.minPrice || query.maxPrice) {
-        filter.price = {
-            $gte: query.minPrice || 0,
-            $lte: query.maxPrice || 1e9,
-        };
-    }
-
-    if (query.category) {
-        filter.category = { $in: query.category };
-    }
-
-    if (query.instock !== undefined) {
-        if (query.instock) {
-            filter.quantity = { $gt: 0 };
+    if (queryObj.category) {
+        const categoryDoc = await CategoryModel.findOne({ name: queryObj.category });
+        if (categoryDoc) {
+            customFilter.category = categoryDoc._id;
         } else {
-            filter.quantity = { $eq: 0 };
+            customFilter.category = null;
         }
+        delete queryObj.category;
     }
 
-    const products = await ProductModel.find(filter, { __v: false })
-        .populate({ path: "soldBy", select: "_id name" })
-        .sort({ [query.sortBy]: query.sortOrder })
-        .skip(skip)
-        .limit(limit);
+    if (queryObj.name) {
+        customFilter.name = { $regex: queryObj.name, $options: "i" };
+        delete queryObj.name;
+    }
 
-    // get total number of products for pagination
-    const productsCount = await ProductModel.countDocuments(filter);
+    if (queryObj.instock !== undefined) {
+        if (queryObj.instock === "true") {
+            customFilter.quantity = { $gt: 0 };
+        } else if (queryObj.instock === "false") {
+            customFilter.quantity = { $eq: 0 };
+        }
+        delete queryObj.instock;
+    }
 
-    // get highest priced product
-    const highestPricedProduct = await ProductModel.findOne().sort({ price: -1 }).select("price");
+    if (queryObj.tag) {
+        customFilter.tags = queryObj.tag;
+        delete queryObj.tag;
+    }
+    if (queryObj.color || queryObj.colors) {
+        const colors = (queryObj.color || queryObj.colors).split(",").map((color) => color.trim());
 
-    // Return 4 products Randomly until fix it soon with best products according to views
-    const total = await ProductModel.countDocuments();
+        customFilter.colors = { $in: colors };
+        delete queryObj.color;
+        delete queryObj.colors;
+    }
+
+    const features = new APIFeatures(
+        Product.find(customFilter)
+            .populate({ path: "soldBy", select: "_id name" })
+            .populate({ path: "category", select: "_id name" }),
+        queryObj,
+    )
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
+
+    const products = await features.query;
+
+    const totalProducts = await Product.countDocuments(customFilter);
+    const highestPricedProduct = await Product.findOne().sort({ price: -1 }).select("price");
+
+    const total = await Product.countDocuments();
     const randomSkip = Math.max(0, Math.floor(Math.random() * (total - 4)));
-
-    const bestSellingProducts = await ProductModel.find({}, { __v: 0 })
+    const bestSellingProducts = await Product.find({})
         .skip(randomSkip)
         .limit(4)
         .populate("soldBy", "_id name");
 
-    if (!products) {
-        return next(AppError.create("Product Not Found", 404, httpStatusText.FAIL));
-    }
-
-    return res.json({
-        status: httpStatusText.SUCCESS,
+    return res.status(200).json({
+        status: "success",
         data: {
-            productsCount,
+            totalProducts,
             products,
             bestSellingProducts,
             highestPricedProduct,
         },
     });
 });
+// const getProducts = asyncWrapper(async (req, res, next) => {
+//     const query = req.query;
+//     const limit = query.limit || 4;
+//     const page = query.page || 1;
+//     const skip = (page - 1) * limit;
 
+//     const filter = {};
+
+//     if (query.minPrice || query.maxPrice) {
+//         filter.price = {
+//             $gte: query.minPrice || 0,
+//             $lte: query.maxPrice || 1e9,
+//         };
+//     }
+
+//     if (query.category) {
+//         filter.category = { $in: query.category };
+//     }
+
+//     if (query.instock !== undefined) {
+//         if (query.instock) {
+//             filter.quantity = { $gt: 0 };
+//         } else {
+//             filter.quantity = { $eq: 0 };
+//         }
+//     }
+
+//     const products = await ProductModel.find(filter, { __v: false })
+//         .populate({ path: "soldBy", select: "_id name" })
+//         .sort({ [query.sortBy]: query.sortOrder })
+//         .skip(skip)
+//         .limit(limit);
+
+//     // get total number of products for pagination
+//     const productsCount = await ProductModel.countDocuments(filter);
+
+//     // get highest priced product
+//     const highestPricedProduct = await ProductModel.findOne().sort({ price: -1 }).select("price");
+
+//     // Return 4 products Randomly until fix it soon with best products according to views
+//     const total = await ProductModel.countDocuments();
+//     const randomSkip = Math.max(0, Math.floor(Math.random() * (total - 4)));
+
+//     const bestSellingProducts = await ProductModel.find({}, { __v: 0 })
+//         .skip(randomSkip)
+//         .limit(4)
+//         .populate("soldBy", "_id name");
+
+//     if (!products) {
+//         return next(AppError.create("Product Not Found", 404, httpStatusText.FAIL));
+//     }
+
+//     return res.json({
+//         status: httpStatusText.SUCCESS,
+//         data: {
+//             productsCount,
+//             products,
+//             bestSellingProducts,
+//             highestPricedProduct,
+//         },
+//     });
+// });
 const getOneProduct = asyncWrapper(async (req, res, next) => {
     const product = await ProductModel.findById(req.params.productId, {
         __v: false,

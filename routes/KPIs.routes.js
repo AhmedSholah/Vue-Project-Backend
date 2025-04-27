@@ -4,8 +4,9 @@ const checkRole = require("../middlewares/checkRole");
 const { getKPIs } = require("../controllers/KPIs.controller");
 
 router.route("/").get(
-    // isAuthenticated, checkRole(["admin", "super-admin"]),
-    getKPIs,
+  isAuthenticated,
+  // checkRole(["admin", "super-admin"]),
+  getKPIs,
 );
 
 module.exports = router;

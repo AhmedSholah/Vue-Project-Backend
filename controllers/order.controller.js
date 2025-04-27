@@ -181,9 +181,9 @@ const getAllOrders = asyncWrapper(async (req, res, next) => {
 
     const orders = await features.query.populate("orderItems.product");
 
-    if (!orders || orders.length === 0) {
-        return next(AppError.create("No Orders Found!", 404, httpStatusText.FAIL));
-    }
+    // if (!orders || orders.length === 0) {
+    //     return next(AppError.create("No Orders Found!", 404, httpStatusText.FAIL));
+    // }
 
     return res.status(200).json({ status: httpStatusText.SUCCESS, data: orders });
 });
