@@ -5,8 +5,6 @@ const AppError = require("../utils/AppError");
 const checkPermission = (requiredPermission) => async (req, res, next) => {
     const { permissions } = req.tokenPayload;
 
-    console.log(permissions);
-
     // const user = await User.findById(userId)
     //     .populate({
     //         path: "role",
@@ -28,7 +26,13 @@ const checkPermission = (requiredPermission) => async (req, res, next) => {
     if (permissions?.includes(requiredPermission)) {
         next();
     } else {
-        return next(AppError.create("Unauthorized", 401, httpStatusText.FAIL));
+        return next(
+            AppError.create(
+                `Insufficient permissions. Required permission: ${requiredPermission}`,
+                401,
+                httpStatusText.FAIL,
+            ),
+        );
     }
 };
 

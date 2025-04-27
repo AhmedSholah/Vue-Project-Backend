@@ -16,28 +16,18 @@ const {
     getCurrentUser,
     updateAvatar,
 } = require("../controllers/user.controller");
+const checkPermission = require("../middlewares/checkPermission");
 
-router
-    .route("/")
-    .get(
-        // isAuthenticated,
-        //  checkRole(["admin"]),
-        getAllUsers,
-    )
-    .patch(
-        isAuthenticated,
-        // validateSchema(userValidation.updateUserSchema)
-        updateUser,
-    );
+router.route("/").get(isAuthenticated, checkPermission("view_all_users"), getAllUsers).patch(
+    isAuthenticated,
+    // validateSchema(userValidation.updateUserSchema)
+    updateUser,
+);
 
 // For Admin Use
 router
     .route("/:id")
-    .get(
-        isAuthenticated,
-        // checkRole(["admin"]),
-        getUser,
-    )
+    .get(isAuthenticated, checkPermission("view_any_user"), getUser)
     .delete(isAuthenticated, deleteUser);
 
 router.route("/me/user").get(isAuthenticated, getCurrentUser);
