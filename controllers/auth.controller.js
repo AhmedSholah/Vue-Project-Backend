@@ -71,8 +71,8 @@ const login = asyncWrapper(async (req, res, next) => {
     }
 
     const defaultRole = await Role.findById(foundUser.role).populate("permissions", "code");
-    const rolePermissions = defaultRole?.permissions.map((p) => p.code);
-    const userExtraPermissions = foundUser?.permissions.map((p) => p.code);
+    const rolePermissions = defaultRole?.permissions.map((p) => p.code) || [];
+    const userExtraPermissions = foundUser?.permissions.map((p) => p.code) || [];
 
     const permissions = [...rolePermissions, ...userExtraPermissions];
 

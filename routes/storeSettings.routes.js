@@ -7,17 +7,14 @@ const {
     updateStoreSettings,
 } = require("../controllers/storeSettings.controller");
 const { partialStoreSettingsSchema } = require("../utils/validation/storeSettings");
+const checkPermission = require("../middlewares/checkPermission");
 
 router
     .route("/")
-    .get(
-        // isAuthenticated,
-        // checkRole(['admin','super-admin']),
-        getStoreSettings,
-    )
+    .get(isAuthenticated, checkPermission("view_store_settings"), getStoreSettings)
     .patch(
-        // isAuthenticated,
-        //  checkRole(["super-admin"]),
+        isAuthenticated,
+        checkPermission("update_store_settings"),
         validateSchema(partialStoreSettingsSchema),
         updateStoreSettings,
     );

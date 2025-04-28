@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const FavoriteModel = require("./favorite.model");
 const mongooseDelete = require("mongoose-delete");
 
 const productSchema = new mongoose.Schema(
