@@ -24,7 +24,6 @@ router
     )
     .post(
         isAuthenticated,
-        // checkRole(["seller", "admin"]),
         checkPermission("create_product"),
         validateSchema(addProductSchema),
         productsController.addOneProduct,
@@ -35,13 +34,13 @@ router
     .get(productsController.getOneProduct)
     .patch(
         isAuthenticated,
-        // checkRole(["seller", "admin"]),
+        checkPermission("update_product"),
         // validateSchema(updateProductSchema),
         productsController.updateOneProduct,
     )
     .delete(
         isAuthenticated,
-        checkRole(["seller", "admin"]),
+        checkPermission("delete_product"),
         validateSchema(deleteProductSchema, "params"),
         productsController.deleteOneProduct,
     );
@@ -50,7 +49,7 @@ router
     .route("/:productId/image")
     .put(
         isAuthenticated,
-        checkRole(["seller", "admin"]),
+        checkPermission("update_product"),
         validateSchema(updateProductSchema),
         upload.single("file"),
         productsController.addProductImage,
@@ -60,7 +59,7 @@ router
     .route("/:productId/image/:imageIndex")
     .delete(
         isAuthenticated,
-        checkRole(["seller", "admin"]),
+        checkPermission("update_product"),
         validateSchema(updateProductSchema),
         upload.single("file"),
         productsController.deleteProductImage,

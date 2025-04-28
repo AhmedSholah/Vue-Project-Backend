@@ -2,6 +2,7 @@ const router = require("express").Router();
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const checkRole = require("../middlewares/checkRole");
 const orderController = require("../controllers/order.controller");
+const checkPermission = require("../middlewares/checkPermission");
 
 router
     .route("/")
@@ -14,19 +15,17 @@ router
         orderController.createOrder,
     );
 
-router.route("/admin").get(
-    // isAuthenticated, checkRole(["admin"]),
-    orderController.getAllOrders,
-);
+
+router
+    .route("/admin")
+    .get(isAuthenticated, checkPermission("view_all_users_orders"), orderController.getAllOrders);
 
 router
     .route("/:orderId")
-    .get(
-        // isAuthenticated,
-        orderController.getOrder,
-    )
+    .get(isAuthenticated, orderController.getOrder)
     .patch(
-        // isAuthenticated, checkRole(["", "seller", "admin"]),
+        isAuthenticated,
+        checkPermission("update_order_status"),
         orderController.updateOrderStatus,
     );
 // .delete(isAuthenticated, deleteOrder);
