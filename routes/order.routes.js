@@ -6,8 +6,15 @@ const checkPermission = require("../middlewares/checkPermission");
 
 router
     .route("/")
-    .get(isAuthenticated, orderController.getAllUserOrders)
-    .post(isAuthenticated, orderController.createOrder);
+    .get(
+        // isAuthenticated,
+        orderController.getAllUserOrders,
+    )
+    .post(
+        // isAuthenticated,
+        orderController.createOrder,
+    );
+
 
 router
     .route("/admin")

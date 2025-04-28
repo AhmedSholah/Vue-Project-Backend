@@ -7,7 +7,10 @@ router.route("/register").post(
     // validateSchema(registerSchema),
     register,
 );
-router.route("/login").post(validateSchema(loginSchema), login);
+router.route("/login").post(
+    // validateSchema(loginSchema),
+    login,
+);
 router.route("/google").get(google);
 router.route("/google/callback").get(googleCallback);
 

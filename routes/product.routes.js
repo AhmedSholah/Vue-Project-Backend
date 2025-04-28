@@ -18,7 +18,10 @@ const upload = multer({ storage: storage });
 
 router
     .route("/")
-    .get(validateSchema(getProductsSchema, "query"), productsController.getProducts)
+    .get(
+        // validateSchema(getProductsSchema, "query"),
+        productsController.getProducts,
+    )
     .post(
         isAuthenticated,
         checkPermission("create_product"),
