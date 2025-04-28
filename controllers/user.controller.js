@@ -60,7 +60,9 @@ const getAllUsers = asyncWrapper(async (req, res, next) => {
 // For Admin Use
 const getUser = asyncWrapper(async (req, res, next) => {
     const id = req.params.id;
-    const user = await UserModel.findOne({ _id: id }, { __v: false, password: false });
+    const user = await UserModel.findOne({ _id: id }, { __v: false, password: false }).populate(
+        "permissions",
+    );
     if (!user) {
         return next(AppError.create("User Not Found", 404, httpStatusText.FAIL));
     }

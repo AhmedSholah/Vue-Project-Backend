@@ -3,8 +3,9 @@ const httpStatusText = require("../utils/httpStatusText");
 const AppError = require("../utils/AppError");
 
 const checkPermission = (requiredPermission) => async (req, res, next) => {
-    const { permissions } = req.tokenPayload;
+    const permissions = req.tokenPayload?.permissions;
 
+    // console.log(permissions);
     // const user = await User.findById(userId)
     //     .populate({
     //         path: "role",
