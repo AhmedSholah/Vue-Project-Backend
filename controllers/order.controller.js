@@ -6,6 +6,7 @@ const CartModel = require("../models/cart.model");
 const httpStatusText = require("../utils/httpStatusText");
 const AppError = require("../utils/AppError");
 const APIFeatures = require("../utils/apiFeatures");
+const Order = require("../models/order.model");
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -180,12 +181,13 @@ const getAllOrders = asyncWrapper(async (req, res, next) => {
         .paginate();
 
     const orders = await features.query.populate("orderItems.product");
+    const totalOrders = await OrderModel.countDocuments();
 
     // if (!orders || orders.length === 0) {
     //     return next(AppError.create("No Orders Found!", 404, httpStatusText.FAIL));
     // }
 
-    return res.status(200).json({ status: httpStatusText.SUCCESS, data: orders });
+    return res.status(200).json({ status: httpStatusText.SUCCESS, totalOrders, data: orders });
 });
 
 module.exports = {

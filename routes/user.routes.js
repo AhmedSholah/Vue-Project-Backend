@@ -18,20 +18,39 @@ const {
 } = require("../controllers/user.controller");
 const checkPermission = require("../middlewares/checkPermission");
 
-router.route("/").get(isAuthenticated, checkPermission("view_all_users"), getAllUsers).patch(
-    isAuthenticated,
-    // validateSchema(userValidation.updateUserSchema)
-    updateUser,
-);
+router
+    .route("/")
+    .get(
+        // isAuthenticated, checkPermission("view_all_users"),
+        getAllUsers,
+    )
+    .patch(
+        isAuthenticated,
+        // validateSchema(userValidation.updateUserSchema)
+        updateUser,
+    );
 
 // For Admin Use
 router
     .route("/:id")
-    .get(isAuthenticated, checkPermission("view_any_user"), getUser)
-    .delete(isAuthenticated, deleteUser);
+    .get(
+        // isAuthenticated, checkPermission("view_any_user"),
+        getUser,
+    )
+    .delete(
+        // isAuthenticated,
+        deleteUser,
+    );
 
-router.route("/me/user").get(isAuthenticated, getCurrentUser);
+router.route("/me/user").get(
+    // isAuthenticated,
+    getCurrentUser,
+);
 
-router.route("/me/avatar").put(isAuthenticated, upload.single("file"), updateAvatar);
+router.route("/me/avatar").put(
+    // isAuthenticated,
+    upload.single("file"),
+    updateAvatar,
+);
 
 module.exports = router;

@@ -6,8 +6,14 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 
 router
     .route("/")
-    .get(isAuthenticated, checkPermission("view_roles"), asyncWrapper(roleController.getRoles))
-    .post(isAuthenticated, checkPermission("create_role"), asyncWrapper(roleController.createRole));
+    .get(
+        // isAuthenticated, checkPermission("view_roles"),
+        asyncWrapper(roleController.getRoles),
+    )
+    .post(
+        // isAuthenticated, checkPermission("create_role"),
+        asyncWrapper(roleController.createRole),
+    );
 
 router.route("/:roleId").patch(roleController.updateRole);
 
