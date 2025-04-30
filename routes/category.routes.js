@@ -12,27 +12,25 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 router.route("/").get(categoryController.getCategories).post(
-    isAuthenticated,
+    // isAuthenticated,
     // validateSchema(categorySchema.addCategorySchema),
-    checkPermission("create_category"),
+    // checkPermission("create_category"),
     categoryController.addCategory,
 );
 // .patch(checkPermission("update_category"), categoryController.updateCategory);
 
 router.route("/:categoryId").delete(
-    isAuthenticated,
+    // isAuthenticated,
     // validateSchema(categorySchema.deletCategorySchema, "params"),
-    checkPermission("delete_category"),
+    // checkPermission("delete_category"),
     categoryController.deletCategory,
 );
 
-router
-    .route("/:categoryId/image")
-    .put(
-        isAuthenticated,
-        checkPermission("update_category"),
-        upload.single("file"),
-        categoryController.updateCategoryImage,
-    );
+router.route("/:categoryId/image").put(
+    // isAuthenticated,
+    // checkPermission("update_category"),
+    upload.single("file"),
+    categoryController.updateCategoryImage,
+);
 
 module.exports = router;

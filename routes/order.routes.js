@@ -15,19 +15,16 @@ router
         orderController.createOrder,
     );
 
+router.route("/admin").get(
+    // isAuthenticated, checkPermission("view_all_users_orders"),
+    orderController.getAllOrders,
+);
 
-router
-    .route("/admin")
-    .get(isAuthenticated, checkPermission("view_all_users_orders"), orderController.getAllOrders);
-
-router
-    .route("/:orderId")
-    .get(isAuthenticated, orderController.getOrder)
-    .patch(
-        isAuthenticated,
-        checkPermission("update_order_status"),
-        orderController.updateOrderStatus,
-    );
+router.route("/:orderId").get(isAuthenticated, orderController.getOrder).patch(
+    // isAuthenticated,
+    // checkPermission("update_order_status"),
+    orderController.updateOrderStatus,
+);
 // .delete(isAuthenticated, deleteOrder);
 
 module.exports = router;

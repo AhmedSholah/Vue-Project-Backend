@@ -49,12 +49,13 @@ const getAllUsers = asyncWrapper(async (req, res, next) => {
         .paginate();
 
     const users = await features.query;
+    const totalUsers = await UserModel.countDocuments();
 
     if (!users || users.length === 0) {
         return next(AppError.create("No Users Found", 404, httpStatusText.FAIL));
     }
 
-    return res.status(200).json({ status: httpStatusText.SUCCESS, data: { users } });
+    return res.status(200).json({ status: httpStatusText.SUCCESS, totalUsers, data: { users } });
 });
 
 // For Admin Use
