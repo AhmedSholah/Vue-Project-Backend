@@ -17,7 +17,7 @@ async function createRole(req, res, next) {
 }
 
 async function getRoles(req, res, next) {
-    const roles = await Role.find();
+    const roles = await Role.find().populate("permissions").lean();
 
     res.status(200).json({
         status: httpStatusText.SUCCESS,

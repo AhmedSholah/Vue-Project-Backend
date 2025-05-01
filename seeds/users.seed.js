@@ -19,7 +19,7 @@ async function createRandomUser(roleId) {
     // Generate a strong password that meets the validation requirements
     const password = `${faker.internet.password()}Aa1!`; // Simplified password generation
 
-    const simulatedCreatedAt = faker.date.past({ years: 2 });
+    const simulatedCreatedAt = faker.date.past({ years: 5 });
 
     // Generate phone number without using numeric helper
     const phoneNumber = Math.floor(10000000000 + Math.random() * 90000000000).toString();
@@ -56,7 +56,6 @@ async function seedUsers(numUsers = 100, roleId) {
 
         const userData = await Promise.all(userPromises);
         console.log(`Successfully generated ${numUsers} users`);
-        // console.log(userData);
         return userData;
     } catch (error) {
         console.error("Error generating users:", error);

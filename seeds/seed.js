@@ -28,9 +28,9 @@ async function runMasterSeeder({
     productsCount = 1000,
     ordersCount = 480,
     clearExisting = false,
-    seedUsers: shouldSeedUsers = true,
+    seedUsers: shouldSeedUsers = false,
     seedProducts: shouldSeedProducts = true,
-    seedOrders: shouldSeedOrders = true,
+    seedOrders: shouldSeedOrders = false,
     roleId = "65f1c27e5e433100c5d7c803", // Default role ID for users
 } = {}) {
     try {
@@ -99,12 +99,12 @@ async function runMasterSeeder({
 }
 
 runMasterSeeder({
-    usersCount: 500,
-    productsCount: 500,
+    usersCount: 25000,
+    productsCount: 1328,
     ordersCount: 50000,
     clearExisting: false,
-    seedUsers: false,
+    seedUsers: true,
     seedProducts: false,
-    seedOrders: true,
+    seedOrders: false,
     roleId: "680e5a54725423d9a29b5017", // Make sure to replace with a valid role ID from your database
 });
