@@ -72,9 +72,9 @@ const getProducts = asyncWrapper(async (req, res, next) => {
     const total = await Product.countDocuments();
     // const randomSkip = Math.max(0, Math.floor(Math.random() * (total - 4)));
     const bestSellingProducts = await Product.find({})
-    .sort({ salesCount: -1 }) 
-    .limit(4)
-    .populate("soldBy", "_id name");
+        .sort({ salesCount: -1 })
+        .limit(4)
+        .populate("soldBy", "_id name");
 
     return res.status(200).json({
         status: "success",
@@ -151,7 +151,9 @@ const getProducts = asyncWrapper(async (req, res, next) => {
 const getOneProduct = asyncWrapper(async (req, res, next) => {
     const product = await ProductModel.findById(req.params.productId, {
         __v: false,
-    }).populate({ path: "soldBy", select: "_id name" });
+    })
+        .populate({ path: "soldBy", select: "_id name" })
+        .populate({ path: "category", select: "_id name" });
 
     if (!product) {
         return next(AppError.create("Product Not Found", 404, httpStatusText.FAIL));
