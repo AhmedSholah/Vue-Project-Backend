@@ -44,7 +44,7 @@ async function updateRole(req, res, next) {
 async function deleteRole(req, res, next) {
     const { roleId } = req.params;
 
-    await Role.findByIdAndDelete(roleId);
+    const role = await Role.findByIdAndDelete(roleId);
 
     if (!role)
         res.status(204).json({
