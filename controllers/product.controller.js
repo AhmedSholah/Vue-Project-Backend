@@ -318,7 +318,7 @@ const addProductImage = asyncWrapper(async (req, res, next) => {
     }`;
 
     const params = {
-        Bucket: "main",
+        Bucket: "vue-project",
         Key: newImagePath,
         Body: req.file.buffer,
         ContentType: req.file.mimetype,
@@ -365,7 +365,7 @@ const deleteProductImage = asyncWrapper(async (req, res, next) => {
         return next(AppError.create("Image not found", 404, httpStatusText.FAIL));
     }
     const deleteCommand = new DeleteObjectCommand({
-        Bucket: "main",
+        Bucket: "vue-project",
         Key: imageToDelete,
     });
     try {

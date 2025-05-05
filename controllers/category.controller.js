@@ -83,7 +83,7 @@ const updateCategoryImage = asyncWrapper(async (req, res, next) => {
     }
 
     const deleteCommand = new DeleteObjectCommand({
-        Bucket: "main",
+        Bucket: "vue-project",
         Key: category.image,
     });
 
@@ -98,7 +98,7 @@ const updateCategoryImage = asyncWrapper(async (req, res, next) => {
     }`;
 
     const params = {
-        Bucket: "main",
+        Bucket: "vue-project",
         Key: newImagePath,
         Body: req.file.buffer,
         ContentType: req.file.mimetype,
