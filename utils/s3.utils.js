@@ -21,4 +21,4 @@ const uploadToS3 = async (fileBuffer, fileName, mimeType) => {
     return `${process.env.AWS_S3_PUBLIC_BUCKET_URL}/${fileName}`;
 };
 
-module.exports = { uploadToS3 };
+module.exports = { uploadToS3, s3Client };
