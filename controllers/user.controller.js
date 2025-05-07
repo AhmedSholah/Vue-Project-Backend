@@ -6,6 +6,7 @@ const AppError = require("../utils/AppError");
 const httpStatusText = require("../utils/httpStatusText");
 const APIFeatures = require("../utils/apiFeatures");
 const Role = require("../models/role.model");
+const bcryptjs = require("bcryptjs");
 
 // const getAllUsers = asyncWrapper(async (req, res, next) => {
 //     // const users = await UserModel.find({}, { __v: false, password: false });
@@ -84,7 +85,8 @@ const getCurrentUser = asyncWrapper(async (req, res, next) => {
 });
 
 const updateUser = asyncWrapper(async (req, res, next) => {
-    const { userId } = req.tokenPayload;
+    // const { userId } = req.tokenPayload;
+    const userId = req.params.id;
     const body = req.body;
 
     const isEmailRegistered = await UserModel.findOne({ email: body.email });
@@ -93,7 +95,9 @@ const updateUser = asyncWrapper(async (req, res, next) => {
     if (isEmailRegistered && !(user.email === body.email)) {
         return next(AppError.create("Email Already Exist", 404, httpStatusText.FAIL));
     }
-
+    if (!req.body.password) {
+        body.password = user.password;
+    }
     const updatedUser = await UserModel.findByIdAndUpdate(userId, body, {
         new: true,
         runValidators: true,
@@ -166,6 +170,57 @@ const updateAvatar = asyncWrapper(async (req, res, next) => {
         },
     });
 });
+const createUser = asyncWrapper(async function (req, res, next) {
+    let {
+        name,
+        email,
+        password,
+        image = "",
+        gender,
+        segments,
+        phoneNumber,
+        permissions,
+        role,
+        tags,
+        wallet = 0,
+        address,
+    } = req.body;
+
+    const oldUser = await UserModel.findOne({ email });
+
+    if (oldUser) {
+        return next(AppError.create("User Already Exists", 409, httpStatusText.FAIL));
+    }
+
+    await UserModel.validate(req.body);
+
+    const hashedPassword = await bcryptjs.hash(password, 12);
+
+    if (!permissions || !permissions.length) {
+        const defaultRole = await Role.findOne({ name: "customer" }).populate(
+            "permissions",
+            "code",
+        );
+        permissions = defaultRole?.permissions.map((p) => p._id) || [];
+    }
+
+    const newUser = await UserModel.create({
+        name,
+        email,
+        password: hashedPassword,
+        image,
+        gender,
+        role,
+        segments,
+        permissions,
+        phoneNumber,
+        tags,
+        wallet,
+        address,
+    });
+
+    res.status(201).json({ status: httpStatusText.SUCCESS, data: { newUser } });
+});
 
 module.exports = {
     getAllUsers,
@@ -174,4 +229,5 @@ module.exports = {
     deleteUser,
     getCurrentUser,
     updateAvatar,
+    createUser,
 };

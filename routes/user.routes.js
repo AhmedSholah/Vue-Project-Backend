@@ -2,8 +2,9 @@ const router = require("express").Router();
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const checkRole = require("../middlewares/checkRole");
 const validateSchema = require("../middlewares/validateSchema");
-const userValidation = require("../utils/validation/userValidation");
 const multer = require("multer");
+const userValidation = require("../utils/validation/userValidation");
+const authValidation = require("../utils/validation/authValidation");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -15,6 +16,7 @@ const {
     deleteUser,
     getCurrentUser,
     updateAvatar,
+    createUser,
 } = require("../controllers/user.controller");
 const checkPermission = require("../middlewares/checkPermission");
 
@@ -28,6 +30,12 @@ router
         isAuthenticated,
         // validateSchema(userValidation.updateUserSchema)
         updateUser,
+    )
+    .post(
+        // isAuthenticated,
+        // checkPermission('create_user')
+        // validateSchema(authValidation.registerSchema),
+        createUser,
     );
 
 // For Admin Use
@@ -40,7 +48,8 @@ router
     .delete(
         // isAuthenticated,
         deleteUser,
-    );
+    )
+    .patch(updateUser);
 
 router.route("/me/user").get(
     // isAuthenticated,

@@ -7,6 +7,7 @@ const httpStatusText = require("../utils/httpStatusText");
 const AppError = require("../utils/AppError");
 const APIFeatures = require("../utils/apiFeatures");
 const Order = require("../models/order.model");
+const Product = require("../models/product.model");
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -32,101 +33,60 @@ const getAllUserOrders = asyncWrapper(async (req, res, next) => {
 });
 
 // =========================================================================
-
 const createOrder = asyncWrapper(async (req, res, next) => {
-    const { userId } = req.tokenPayload;
-    const { shippingAddress, paymentMethod } = req.body;
+    const {
+        user,
+        shippingAddress,
+        paymentMethod,
+        totalPrice,
+        orderItems,
+        orderStatus = "pending",
+    } = req.body;
 
-    const user = await UserModel.findById(userId).select("email");
-
-    const cart = await CartModel.findOne({ user: userId }).populate("items.product");
-
-    if (!cart.items || cart.items.length == 0) {
-        return next(AppError.create("Cart Is Empty"));
+    if (!orderItems || orderItems.length === 0) {
+        return next(AppError.create("Order must contain at least one item", 400));
     }
 
-    let orderItems = [];
+    const existingUser = await UserModel.findById(user).select("email");
+    if (!existingUser) return next(AppError.create("User not found", 404));
 
-    for (let item of cart.items) {
-        const product = item.product;
+    for (let item of orderItems) {
+        const product = await Product.findById(item.product);
+        if (!product) {
+            return next(AppError.create(`Product not found: ${item.product}`, 404));
+        }
 
-        // if (product.quantity < item.quantity) {
-        //     return next(AppError.create(`${product.name} is out of stock`));
-        // }
+        if (product.quantity < item.quantity) {
+            return next(AppError.create(`${product.name} is out of stock`, 400));
+        }
 
-        // product.quantity -= item.quantity;
+        product.quantity -= item.quantity;
         await product.save();
-        orderItems.push({
-            product: product,
+
+        validatedItems.push({
+            product: product._id,
             quantity: item.quantity,
-            price: product.priceAfterDiscount,
+            price: item.price ?? product.priceAfterDiscount,
         });
     }
 
     const latestOrder = await OrderModel.findOne().sort({ createdAt: -1 }).limit(1);
+    const nextOrderNumber = latestOrder?.orderNumber ? latestOrder.orderNumber + 1 : 1;
 
-    const order = new OrderModel({
-        user: userId,
-        orderItems: orderItems,
+    const newOrder = await OrderModel.create({
+        user,
+        orderItems: validatedItems,
         shippingAddress,
         paymentMethod,
-        totalPrice: cart.totalPrice,
-        status: "Pending",
-        orderNumber: latestOrder.orderNumber + 1,
+        totalPrice,
+        orderStatus,
+        orderNumber: nextOrderNumber,
     });
 
-    await order.save();
-    cart.items = [];
-    await cart.save();
-
-    const sessionItems = [];
-
-    orderItems.map((item) => {
-        sessionItems.push({
-            price_data: {
-                currency: "egp",
-                product_data: {
-                    name: item.product.name,
-                },
-                unit_amount: item.product.priceAfterDiscount * 100,
-            },
-            quantity: item.quantity,
-        });
+    return res.status(201).json({
+        message: "Order created successfully",
+        order: newOrder,
     });
-
-    const session = await stripe.checkout.sessions.create({
-        line_items: sessionItems,
-        mode: "payment",
-        // shipping_address_collection: {
-        //     allowed_countries: ["EG", "SA"],
-        // },
-        customer_email: user.email,
-        // payment_method_types: ["card"],
-        // shipping_options: [
-        //     {
-        //         shipping_rate_data: {
-        //             type: "fixed_amount",
-        //             fixed_amount: { amount: 2500, currency: "egp" },
-        //             display_name: "Standard Shipping",
-        //             delivery_estimate: {
-        //                 minimum: { unit: "business_day", value: 5 },
-        //                 maximum: { unit: "business_day", value: 7 },
-        //             },
-        //         },
-        //     },
-        // ],
-
-        billing_address_collection: "auto",
-        success_url: `https://craftopia-angular.vercel.app/checkout-confirmation`,
-        cancel_url: `https://craftopia-angular.vercel.app`,
-
-        metadata: {
-            orderId: order._id.toString(),
-            userId: userId.toString(),
-        },
-    });
-
-    return res.status(201).json(session.url);
 });
 
 const updateOrderStatus = asyncWrapper(async (req, res, next) => {
@@ -147,6 +107,28 @@ const updateOrderStatus = asyncWrapper(async (req, res, next) => {
 
     return res.status(200).json({ status: httpStatusText.SUCCESS, data: updatedOrder });
 });
+const generalOrderUpdate = asyncWrapper(async (req, res, next) => {
+    const orderId = req.params.orderId;
+    const updates = req.body;
+    const order = await OrderModel.findById(orderId);
+    if (!order) {
+        return next(AppError.create("Order not found!", 404, httpStatusText.FAIL));
+    }
+
+    Object.assign(order, updates);
+
+    await order.save();
+
+    const updatedOrder = await OrderModel.findById(orderId)
+        .populate("user", "-password")
+        .populate("orderItems.product")
+        .select("-__v");
+
+    return res.status(200).json({
+        status: httpStatusText.SUCCESS,
+        data: updatedOrder,
+    });
+});
 
 const getOrder = asyncWrapper(async (req, res, next) => {
     const orderId = req.params.orderId;
@@ -154,7 +136,7 @@ const getOrder = asyncWrapper(async (req, res, next) => {
 
     const order = await OrderModel.findOne({
         _id: orderId,
-        user: userId,
+        // user: userId,
     }).populate("orderItems.product");
 
     if (!order) {
@@ -196,4 +178,5 @@ module.exports = {
     updateOrderStatus,
     getOrder,
     getAllOrders,
+    generalOrderUpdate,
 };

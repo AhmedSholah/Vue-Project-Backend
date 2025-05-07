@@ -23,7 +23,8 @@ router.route("/admin").get(
 router.route("/:orderId").get(isAuthenticated, orderController.getOrder).patch(
     // isAuthenticated,
     // checkPermission("update_order_status"),
-    orderController.updateOrderStatus,
+    // orderController.updateOrderStatus,
+    orderController.generalOrderUpdate,
 );
 // .delete(isAuthenticated, deleteOrder);
 
