@@ -1,6 +1,6 @@
 const Permission = require("../models/permission.model");
+const AppError = require("../utils/AppError");
 const httpStatusText = require("../utils/httpStatusText");
-const AppError = require("../utils/appError");
 
 async function createPermission(req, res, next) {
     const { name, code } = req.body;
