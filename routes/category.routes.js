@@ -19,7 +19,7 @@ router.route("/").get(categoryController.getCategories).post(
 );
 // .patch(checkPermission("update_category"), categoryController.updateCategory);
 
-router.route("/:categoryId").delete(
+router.route("/:categoryId").patch(categoryController.updateCategory).delete(
     // isAuthenticated,
     // validateSchema(categorySchema.deletCategorySchema, "params"),
     // checkPermission("delete_category"),

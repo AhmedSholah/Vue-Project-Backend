@@ -44,7 +44,7 @@ async function createRandomOrder(userIds, allProductIds, productsData) {
         "cancelled",
     ]);
     const paymentStatus = faker.helpers.arrayElement(["pending", "paid", "failed", "refunded"]);
-    const simulatedCreatedAt = faker.date.past({ years: 1 });
+    const simulatedCreatedAt = faker.date.past({ years: 5 });
 
     let deliveredAt = null;
     if (orderStatus === "delivered" && paymentStatus === "paid") {

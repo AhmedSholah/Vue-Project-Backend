@@ -23,7 +23,7 @@ async function createRandomProduct(categoryIds, userIds) {
     );
     const shippingCost = parseFloat(faker.commerce.price({ min: 5, max: 50, dec: 2 }));
     const estimatedDelivery = faker.number.int({ min: 1, max: 7 });
-    const simulatedCreatedAt = faker.date.past();
+    const simulatedCreatedAt = faker.date.past({ years: 5 });
 
     const randomCategoryId = faker.helpers.arrayElement(categoryIds);
     const randomUserId = faker.helpers.arrayElement(userIds);

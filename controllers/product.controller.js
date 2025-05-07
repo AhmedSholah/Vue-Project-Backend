@@ -151,7 +151,9 @@ const getProducts = asyncWrapper(async (req, res, next) => {
 const getOneProduct = asyncWrapper(async (req, res, next) => {
     const product = await ProductModel.findById(req.params.productId, {
         __v: false,
-    }).populate({ path: "soldBy", select: "_id name" });
+    })
+        .populate({ path: "soldBy", select: "_id name" })
+        .populate({ path: "category", select: "_id name" });
 
     if (!product) {
         return next(AppError.create("Product Not Found", 404, httpStatusText.FAIL));
@@ -316,7 +318,7 @@ const addProductImage = asyncWrapper(async (req, res, next) => {
     }`;
 
     const params = {
-        Bucket: "main",
+        Bucket: "vue-project",
         Key: newImagePath,
         Body: req.file.buffer,
         ContentType: req.file.mimetype,
@@ -363,7 +365,7 @@ const deleteProductImage = asyncWrapper(async (req, res, next) => {
         return next(AppError.create("Image not found", 404, httpStatusText.FAIL));
     }
     const deleteCommand = new DeleteObjectCommand({
-        Bucket: "main",
+        Bucket: "vue-project",
         Key: imageToDelete,
     });
     try {

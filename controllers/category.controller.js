@@ -31,6 +31,22 @@ const addCategory = asyncWrapper(async (req, res, next) => {
     });
 });
 
+const updateCategory = asyncWrapper(async (req, res, next) => {
+    const { categoryId } = req.params;
+    const { name } = req.body;
+
+    const category = await categoryModel.findByIdAndUpdate(categoryId, { name }, { new: true });
+
+    if (!category) {
+        return next(AppError.create("Category Not Found", 404, httpStatusText.FAIL));
+    }
+
+    return res.json({
+        status: httpStatusText.SUCCESS,
+        data: { message: "Category updated successfully." },
+    });
+});
+
 const deletCategory = asyncWrapper(async (req, res, next) => {
     const { categoryId } = req.params;
     const session = await mongoose.startSession();
@@ -67,7 +83,7 @@ const updateCategoryImage = asyncWrapper(async (req, res, next) => {
     }
 
     const deleteCommand = new DeleteObjectCommand({
-        Bucket: "main",
+        Bucket: "vue-project",
         Key: category.image,
     });
 
@@ -82,7 +98,7 @@ const updateCategoryImage = asyncWrapper(async (req, res, next) => {
     }`;
 
     const params = {
-        Bucket: "main",
+        Bucket: "vue-project",
         Key: newImagePath,
         Body: req.file.buffer,
         ContentType: req.file.mimetype,
@@ -109,6 +125,7 @@ const updateCategoryImage = asyncWrapper(async (req, res, next) => {
 module.exports = {
     getCategories,
     addCategory,
+    updateCategory,
     deletCategory,
     updateCategoryImage,
 };
