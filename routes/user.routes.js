@@ -23,7 +23,8 @@ const checkPermission = require("../middlewares/checkPermission");
 router
     .route("/")
     .get(
-        // isAuthenticated, checkPermission("view_all_users"),
+        isAuthenticated,
+        //  checkPermission("view_all_users"),
         getAllUsers,
     )
     .patch(
@@ -42,24 +43,19 @@ router
 router
     .route("/:id")
     .get(
-        // isAuthenticated, checkPermission("view_any_user"),
+        isAuthenticated,
+        // checkPermission("view_any_user"),
         getUser,
     )
+
     .delete(
-        // isAuthenticated,
+         isAuthenticated,
         deleteUser,
     )
     .patch(updateUser);
 
-router.route("/me/user").get(
-    // isAuthenticated,
-    getCurrentUser,
-);
+router.route("/me/user").get(isAuthenticated, getCurrentUser);
 
-router.route("/me/avatar").put(
-    // isAuthenticated,
-    upload.single("file"),
-    updateAvatar,
-);
+router.route("/me/avatar").put(isAuthenticated, upload.single("file"), updateAvatar);
 
 module.exports = router;
