@@ -43,11 +43,13 @@ const getAllUsers = asyncWrapper(async (req, res, next) => {
         queryObj.role = roleDoc._id.toString();
     }
 
-    const features = new APIFeatures(UserModel.find({}, { __v: false, password: false }), queryObj)
+    const features = new APIFeatures(
+        UserModel.find({}, { __v: false, password: false }).populate("role", "name"),
+        queryObj,
+    )
         .filter()
         .sort()
         .limitFields()
-        .populate("role.name")
         .paginate();
 
     const users = await features.query;

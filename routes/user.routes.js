@@ -23,7 +23,7 @@ const checkPermission = require("../middlewares/checkPermission");
 router
     .route("/")
     .get(
-        isAuthenticated,
+        // isAuthenticated,
         //  checkPermission("view_all_users"),
         getAllUsers,
     )
