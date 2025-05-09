@@ -33,7 +33,7 @@ router
         updateUser,
     )
     .post(
-        // isAuthenticated,
+        isAuthenticated,
         // checkPermission('create_user')
         // validateSchema(authValidation.registerSchema),
         createUser,
