@@ -183,7 +183,7 @@ const getOneProduct = asyncWrapper(async (req, res, next) => {
 // });
 const addOneProduct = asyncWrapper(async (req, res, next) => {
     const product = { ...req.body };
-    product.soldBy = req.tokenPayload.userId;
+    // product.soldBy = req.tokenPayload.userId;
 
     // Validate category
     const categoryExists = await CategoryModel.findById(product.category);

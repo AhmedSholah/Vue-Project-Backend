@@ -27,7 +27,28 @@ const productSchema = new mongoose.Schema(
         ],
         colors: {
             type: [String],
-            default: ["red", "green", "yellow", "blue", "pink"],
+            default: [
+                "Black",
+                "White",
+                "Gray",
+                "Red",
+                "Green",
+                "Blue",
+                "Yellow",
+                "Orange",
+                "Purple",
+                "Pink",
+                "Brown",
+                "Cyan",
+                "Magenta",
+                "Navy",
+                "Olive",
+                "Teal",
+                "Maroon",
+                "Lime",
+                "Indigo",
+                "Turquoise",
+            ],
         },
         discountAmount: {
             type: Number,
@@ -48,7 +69,7 @@ const productSchema = new mongoose.Schema(
         description: {
             type: String,
             required: true,
-            minlength: [100, "Description must be at least 100 characters long."],
+            minlength: [10, "Description must be at least 10 characters long."],
             maxLength: [5000, "Description cannot exceed 5000 characters."],
         },
         views: {
@@ -99,7 +120,7 @@ const productSchema = new mongoose.Schema(
         soldBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            required: true,
+            // required: true,
         },
     },
     {
