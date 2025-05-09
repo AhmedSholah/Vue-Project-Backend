@@ -47,15 +47,13 @@ router
         // checkPermission("view_any_user"),
         getUser,
     )
-
-    .delete(
-         isAuthenticated,
-        deleteUser,
-    )
+    .delete(isAuthenticated, deleteUser)
     .patch(updateUser);
 
 router.route("/me/user").get(isAuthenticated, getCurrentUser);
 
 router.route("/me/avatar").put(isAuthenticated, upload.single("file"), updateAvatar);
+
+router.route("/:id/avatar").put(isAuthenticated, upload.single("file"), updateAvatar);
 
 module.exports = router;

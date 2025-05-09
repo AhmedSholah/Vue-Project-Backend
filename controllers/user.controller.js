@@ -124,7 +124,10 @@ const deleteUser = asyncWrapper(async (req, res, next) => {
 });
 
 const updateAvatar = asyncWrapper(async (req, res, next) => {
-    const { userId } = req.tokenPayload;
+    let userId = req.tokenPayload.userId;
+    if (req.params.id) {
+        userId = req.params.id;
+    }
 
     const user = await UserModel.findById(userId);
 
