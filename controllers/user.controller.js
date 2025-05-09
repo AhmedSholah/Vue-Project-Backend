@@ -47,7 +47,7 @@ const getAllUsers = asyncWrapper(async (req, res, next) => {
         .filter()
         .sort()
         .limitFields()
-        .populate("role")
+        // .populate("role")
         .paginate();
 
     const users = await features.query;
