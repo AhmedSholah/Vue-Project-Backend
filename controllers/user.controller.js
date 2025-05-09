@@ -8,6 +8,30 @@ const APIFeatures = require("../utils/apiFeatures");
 const Role = require("../models/role.model");
 const bcryptjs = require("bcryptjs");
 
+// const getAllUsers = asyncWrapper(async (req, res, next) => {
+//     // const users = await UserModel.find({}, { __v: false, password: false });
+//     // if (!users) {
+//     //     return next(
+//     //         AppError.create("No Users Found", 404, httpStatusText.FAIL)
+//     //     );
+//     // }
+//     // return res
+//     //     .status(200)
+//     //     .json({ status: httpStatusText.SUCCESS, data: { users } });
+//     const features = new APIFeatures(UserModel.find({}, { __v: false, password: false }), req.query)
+//         .filter()
+//         .sort()
+//         .limitFields()
+//         .paginate();
+
+//     const users = await features.query;
+
+//     if (!users || users.length === 0) {
+//         return next(AppError.create("No Users Found", 404, httpStatusText.FAIL));
+//     }
+
+//     return res.status(200).json({ status: httpStatusText.SUCCESS, data: { users } });
+// });
 const getAllUsers = asyncWrapper(async (req, res, next) => {
     const queryObj = { ...req.query };
 
@@ -19,13 +43,11 @@ const getAllUsers = asyncWrapper(async (req, res, next) => {
         queryObj.role = roleDoc._id.toString();
     }
 
-    const features = new APIFeatures(
-        UserModel.find({}, { __v: false, password: false }).populate("role", "name permissions"),
-        queryObj,
-    )
+    const features = new APIFeatures(UserModel.find({}, { __v: false, password: false }), queryObj)
         .filter()
         .sort()
         .limitFields()
+        .populate("role")
         .paginate();
 
     const users = await features.query;

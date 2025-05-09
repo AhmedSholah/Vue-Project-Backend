@@ -45,6 +45,11 @@ class APIFeatures {
 
         return this;
     }
+
+    populate(field) {
+        this.query = this.query.populate(field);
+        return this;
+    }
 }
 
 module.exports = APIFeatures;
