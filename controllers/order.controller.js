@@ -158,7 +158,7 @@ const getAllOrders = asyncWrapper(async (req, res, next) => {
     //     return next(AppError.create("No Orders Found!", 404, httpStatusText.FAIL));
     //   }
 
-    const features = new APIFeatures(OrderModel.find(), req.query)
+    const features = new APIFeatures(OrderModel.find().populate("user"), req.query)
         .filter()
         .sort()
         .limitFields()

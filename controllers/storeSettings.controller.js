@@ -2,6 +2,7 @@ const asyncWrapper = require("../middlewares/asyncWrapper");
 const storeSettingsModel = require("../models/storeSettings.model");
 const APIFeatures = require("../utils/apiFeatures");
 const httpStatusText = require("../utils/httpStatusText");
+const AppError = require("../utils/AppError");
 
 const getStoreSettings = asyncWrapper(async (req, res, next) => {
     const features = new APIFeatures(storeSettingsModel.find(), req.query)

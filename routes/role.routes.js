@@ -15,6 +15,6 @@ router
         asyncWrapper(roleController.createRole),
     );
 
-router.route("/:roleId").patch(roleController.updateRole);
+router.route("/:roleId").patch(roleController.updateRole).delete(roleController.deleteRole);
 
 module.exports = router;

@@ -17,7 +17,7 @@ async function createRole(req, res, next) {
 }
 
 async function getRoles(req, res, next) {
-    const roles = await Role.find();
+    const roles = await Role.find().populate("permissions").lean();
 
     res.status(200).json({
         status: httpStatusText.SUCCESS,
@@ -41,8 +41,21 @@ async function updateRole(req, res, next) {
     });
 }
 
+async function deleteRole(req, res, next) {
+    const { roleId } = req.params;
+
+    const role = await Role.findByIdAndDelete(roleId);
+
+    if (!role)
+        res.status(204).json({
+            status: httpStatusText.SUCCESS,
+            data: null,
+        });
+}
+
 module.exports = {
     createRole,
     getRoles,
     updateRole,
+    deleteRole,
 };

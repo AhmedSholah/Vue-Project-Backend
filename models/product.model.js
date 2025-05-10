@@ -142,7 +142,7 @@ productSchema.virtual("images").get(function () {
         return [];
     }
     return this.imageNames.map(
-        (imageName) => `${process.env.AWS_S3_PUBLIC_BUCKET_URL}${imageName}`,
+        (imageName) => `${process.env.AWS_S3_PUBLIC_BUCKET_URL}/${imageName}`,
     );
 });
 

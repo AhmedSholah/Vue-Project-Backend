@@ -114,7 +114,7 @@ const userSchema = new mongoose.Schema(
 
 userSchema.virtual("avatarUrl").get(function () {
     if (this.avatar?.split("/")[0] === "users") {
-        return process.env.AWS_S3_PUBLIC_BUCKET_URL + this.avatar;
+        return process.env.AWS_S3_PUBLIC_BUCKET_URL + "/" + this.avatar;
     } else if (this.avatar?.split("/")[0] !== "users") {
         return this.avatar;
     } else {

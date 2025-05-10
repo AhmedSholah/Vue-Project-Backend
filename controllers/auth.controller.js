@@ -44,8 +44,8 @@ const register = asyncWrapper(async function (req, res, next) {
         segments,
     });
 
-    // await CartModel.create({ user: newUser._id });
-    // await FavoriteModel.create({ userId: newUser._id });
+    await CartModel.create({ user: newUser._id });
+    await FavoriteModel.create({ userId: newUser._id });
 
     const tokenPayload = {
         userId: newUser._id,
@@ -62,7 +62,7 @@ const login = asyncWrapper(async (req, res, next) => {
     const foundUser = await UserModel.findOne({ email }).populate("permissions", "code");
 
     if (!foundUser) {
-        return next(AppError.create("User Not Found", 404, httpStatusText.FAIL));
+        return next(AppError.create("Invalid Credentials", 404, httpStatusText.FAIL));
     }
 
     const isCorretPassword = await bcryptjs.compare(password, foundUser.password);
@@ -70,11 +70,15 @@ const login = asyncWrapper(async (req, res, next) => {
         return next(AppError.create("Invalid Credentials", 501, httpStatusText.FAIL));
     }
 
-    const defaultRole = await Role.findById(foundUser.role).populate("permissions", "code");
-    const rolePermissions = defaultRole?.permissions.map((p) => p.code) || [];
+    const userRole = await Role.findById(foundUser.role).populate("permissions", "code");
+    // console.log(userRole.name);
+    // if (userRole.name === "admin") {
+    // }
+    const rolePermissions = userRole?.permissions.map((p) => p.code) || [];
     const userExtraPermissions = foundUser?.permissions.map((p) => p.code) || [];
 
     const permissions = [...rolePermissions, ...userExtraPermissions];
+    // console.log(permissions);
 
     const tokenPayload = {
         userId: foundUser._id,

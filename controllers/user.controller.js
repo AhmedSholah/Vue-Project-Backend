@@ -43,7 +43,10 @@ const getAllUsers = asyncWrapper(async (req, res, next) => {
         queryObj.role = roleDoc._id.toString();
     }
 
-    const features = new APIFeatures(UserModel.find({}, { __v: false, password: false }), queryObj)
+    const features = new APIFeatures(
+        UserModel.find({}, { __v: false, password: false }).populate("role", "name"),
+        queryObj,
+    )
         .filter()
         .sort()
         .limitFields()
@@ -124,7 +127,10 @@ const deleteUser = asyncWrapper(async (req, res, next) => {
 });
 
 const updateAvatar = asyncWrapper(async (req, res, next) => {
-    const { userId } = req.tokenPayload;
+    let userId = req.tokenPayload.userId;
+    if (req.params.id) {
+        userId = req.params.id;
+    }
 
     const user = await UserModel.findById(userId);
 
@@ -133,7 +139,7 @@ const updateAvatar = asyncWrapper(async (req, res, next) => {
     }
 
     const deleteCommand = new DeleteObjectCommand({
-        Bucket: "main",
+        Bucket: "vue-project",
         Key: user.avatar,
     });
 
@@ -146,7 +152,7 @@ const updateAvatar = asyncWrapper(async (req, res, next) => {
     const newAvatarPath = `users/${userId}/avatar-${Date.now()}.${req.file.mimetype.split("/")[1]}`;
 
     const params = {
-        Bucket: "main",
+        Bucket: "vue-project",
         Key: newAvatarPath,
         Body: req.file.buffer,
         ContentType: req.file.mimetype,

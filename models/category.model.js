@@ -25,7 +25,7 @@ const categorySchema = new mongoose.Schema(
 
 categorySchema.virtual("imageUrl").get(function () {
     if (this.image) {
-        return process.env.AWS_S3_PUBLIC_BUCKET_URL + this.image;
+        return process.env.AWS_S3_PUBLIC_BUCKET_URL + "/" + this.image;
     } else {
         return null;
     }
