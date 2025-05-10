@@ -139,7 +139,9 @@ const getOrder = asyncWrapper(async (req, res, next) => {
     const order = await OrderModel.findOne({
         _id: orderId,
         // user: userId,
-    }).populate("orderItems.product");
+    })
+        .populate("orderItems.product")
+        .populate("user", "-password");
 
     if (!order) {
         return next(AppError.create("Order Not Found!", 404, httpStatusText.FAIL));
