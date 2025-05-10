@@ -17,6 +17,7 @@ const {
     getCurrentUser,
     updateAvatar,
     createUser,
+    deleteAvatar,
 } = require("../controllers/user.controller");
 const checkPermission = require("../middlewares/checkPermission");
 
@@ -54,6 +55,9 @@ router.route("/me/user").get(isAuthenticated, getCurrentUser);
 
 router.route("/me/avatar").put(isAuthenticated, upload.single("file"), updateAvatar);
 
-router.route("/:id/avatar").put(isAuthenticated, upload.single("file"), updateAvatar);
+router
+    .route("/:id/avatar")
+    .put(isAuthenticated, upload.single("file"), updateAvatar)
+    .delete(isAuthenticated, deleteAvatar);
 
 module.exports = router;

@@ -295,12 +295,12 @@ const addProductImage = asyncWrapper(async (req, res, next) => {
         return next(AppError.create("Product not found", 404, httpStatusText.FAIL));
     }
 
-    const isAdmin = role === "admin";
-    const isOwner = product.soldBy.toString() === userId.toString();
+    // const isAdmin = role === "admin";
+    // const isOwner = product.soldBy.toString() === userId.toString();
 
-    if (!isAdmin && !isOwner) {
-        return next(AppError.create("Unauthorized", 401, httpStatusText.FAIL));
-    }
+    // if (!isAdmin && !isOwner) {
+    //     return next(AppError.create("Unauthorized", 401, httpStatusText.FAIL));
+    // }
 
     // const deleteCommand = new DeleteObjectCommand({
     //     Bucket: "main",
@@ -352,12 +352,12 @@ const deleteProductImage = asyncWrapper(async (req, res, next) => {
         return next(AppError.create("Product not found", 404, httpStatusText.FAIL));
     }
 
-    const isAdmin = role === "admin";
-    const isOwner = product.soldBy.toString() === userId.toString();
+    // const isAdmin = role === "admin";
+    // const isOwner = product.soldBy.toString() === userId.toString();
 
-    if (!isAdmin && !isOwner) {
-        return next(AppError.create("Unauthorized", 401, httpStatusText.FAIL));
-    }
+    // if (!isAdmin && !isOwner) {
+    //     return next(AppError.create("Unauthorized", 401, httpStatusText.FAIL));
+    // }
 
     const imageToDelete = product.imageNames[imageIndex];
 
@@ -369,11 +369,11 @@ const deleteProductImage = asyncWrapper(async (req, res, next) => {
         Key: imageToDelete,
     });
     try {
-        await s3Client.send(deleteCommand);
         product.imageNames.splice(imageIndex, 1);
         await product.save();
+        await s3Client.send(deleteCommand);
     } catch (error) {
-        return next(AppError.create("Error deleting image", 500, httpStatusText.FAIL));
+        // return next(AppError.create("Error deleting image", 500, httpStatusText.FAIL));
     }
 
     return res.status(200).json({

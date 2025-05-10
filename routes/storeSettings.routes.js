@@ -12,11 +12,12 @@ const checkPermission = require("../middlewares/checkPermission");
 router
     .route("/")
     .get(
-        // isAuthenticated, checkPermission("view_store_settings"),
+        isAuthenticated,
+        // checkPermission("view_store_settings"),
         getStoreSettings,
     )
     .patch(
-        // isAuthenticated,
+        isAuthenticated,
         // checkPermission("update_store_settings"),
         validateSchema(partialStoreSettingsSchema),
         updateStoreSettings,

@@ -228,6 +228,41 @@ const createUser = asyncWrapper(async function (req, res, next) {
     res.status(201).json({ status: httpStatusText.SUCCESS, data: { newUser } });
 });
 
+const deleteAvatar = asyncWrapper(async function (req, res, next) {
+    let userId = req.tokenPayload.userId;
+    if (req.params.id) {
+        userId = req.params.id;
+    }
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+        return next(AppError.create("User Not Found", 404, httpStatusText.FAIL));
+    }
+
+    const deleteCommand = new DeleteObjectCommand({
+        Bucket: "vue-project",
+        Key: user.avatar,
+    });
+
+    if (user.avatar) {
+        try {
+            await s3Client.send(deleteCommand);
+        } catch (error) {}
+    }
+
+    user.avatar = "";
+    await user.save();
+
+    await res.status(200).json({
+        status: httpStatusText.SUCCESS,
+        data: {
+            avatar: "",
+            user,
+        },
+    });
+});
+
 module.exports = {
     getAllUsers,
     getUser,
@@ -236,4 +271,5 @@ module.exports = {
     getCurrentUser,
     updateAvatar,
     createUser,
+    deleteAvatar,
 };
