@@ -50,6 +50,8 @@ const createOrder = asyncWrapper(async (req, res, next) => {
     const existingUser = await UserModel.findById(user).select("email");
     if (!existingUser) return next(AppError.create("User not found", 404));
 
+    const validatedItems = [];
+
     for (let item of orderItems) {
         const product = await Product.findById(item.product);
         if (!product) {
@@ -70,7 +72,7 @@ const createOrder = asyncWrapper(async (req, res, next) => {
         });
     }
 
-    const latestOrder = await OrderModel.findOne().sort({ createdAt: -1 }).limit(1);
+    const latestOrder = await OrderModel.findOne().sort({ createdAt: -1 });
     const nextOrderNumber = latestOrder?.orderNumber ? latestOrder.orderNumber + 1 : 1;
 
     const newOrder = await OrderModel.create({
