@@ -6,26 +6,23 @@ const checkPermission = require("../middlewares/checkPermission");
 
 router
     .route("/")
-    .get(
-        // isAuthenticated,
-        orderController.getAllUserOrders,
-    )
-    .post(
-        // isAuthenticated,
-        orderController.createOrder,
-    );
+    .get(isAuthenticated, orderController.getAllUserOrders)
+    .post(isAuthenticated, orderController.createOrder);
 
 router.route("/admin").get(
-    // isAuthenticated, checkPermission("view_all_users_orders"),
+    isAuthenticated,
+    //  checkPermission("view_all_users_orders"),
     orderController.getAllOrders,
 );
 
 router.route("/:orderId").get(isAuthenticated, orderController.getOrder).patch(
-     isAuthenticated,
+    isAuthenticated,
     // checkPermission("update_order_status"),
     // orderController.updateOrderStatus,
     orderController.generalOrderUpdate,
 );
-// .delete(isAuthenticated, deleteOrder);
+// .delete(
+isAuthenticated,
+    // deleteOrder);
 
-module.exports = router;
+    (module.exports = router);

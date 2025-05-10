@@ -23,7 +23,7 @@ router
         productsController.getProducts,
     )
     .post(
-        // isAuthenticated,
+        isAuthenticated,
         // checkPermission("create_product"),
         validateSchema(addProductSchema),
         productsController.addOneProduct,
@@ -33,28 +33,30 @@ router
     .route("/:productId")
     .get(productsController.getOneProduct)
     .patch(
-        // isAuthenticated,
+        isAuthenticated,
         // checkPermission("update_product"),
         validateSchema(updateProductSchema),
         productsController.updateOneProduct,
     )
     .delete(
-        // isAuthenticated,
+        isAuthenticated,
         // checkPermission("delete_product"),
         validateSchema(deleteProductSchema, "params"),
         productsController.deleteOneProduct,
     );
 
-router.route("/:productId/image").put(
-    // isAuthenticated,
-    // checkPermission("update_product"),
-    validateSchema(updateProductSchema),
-    upload.single("file"),
-    productsController.addProductImage,
-);
+router
+    .route("/:productId/image")
+    .put(
+        isAuthenticated,
+        checkPermission("update_product"),
+        validateSchema(updateProductSchema),
+        upload.single("file"),
+        productsController.addProductImage,
+    );
 
 router.route("/:productId/image/:imageIndex").delete(
-    // isAuthenticated,
+    isAuthenticated,
     // checkPermission("update_product"),
     validateSchema(updateProductSchema),
     upload.single("file"),

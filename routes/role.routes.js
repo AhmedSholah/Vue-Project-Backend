@@ -7,11 +7,13 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 router
     .route("/")
     .get(
-        // isAuthenticated, checkPermission("view_roles"),
+        isAuthenticated,
+        //  checkPermission("view_roles"),
         asyncWrapper(roleController.getRoles),
     )
     .post(
-        // isAuthenticated, checkPermission("create_role"),
+        isAuthenticated,
+        //  checkPermission("create_role"),
         asyncWrapper(roleController.createRole),
     );
 
