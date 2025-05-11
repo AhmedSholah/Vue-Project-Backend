@@ -35,12 +35,26 @@ const bcryptjs = require("bcryptjs");
 const getAllUsers = asyncWrapper(async (req, res, next) => {
     const queryObj = { ...req.query };
 
+    // if (queryObj.role) {
+    //     // const roleDoc = await Role.findOne({ name: queryObj.role });
+    //     // if (!roleDoc) {
+    //     //     return next(AppError.create("Role not found", 404, httpStatusText.FAIL));
+    //     // }
+    //     // queryObj.role = roleDoc._id.toString();
+    //     const roleDoc = await Role.findOne({ name: queryObj.role });
+    //     if (!roleDoc) {
+    //         queryObj.role = roleDoc ? roleDoc._id : null;
+    //         delete queryObj.category;
+    //     }
+    // }
     if (queryObj.role) {
         const roleDoc = await Role.findOne({ name: queryObj.role });
-        if (!roleDoc) {
-            return next(AppError.create("Role not found", 404, httpStatusText.FAIL));
+
+        if (roleDoc) {
+            queryObj.role = roleDoc._id.toString();
+        } else {
+            queryObj.role = null;
         }
-        queryObj.role = roleDoc._id.toString();
     }
 
     const features = new APIFeatures(
@@ -55,9 +69,9 @@ const getAllUsers = asyncWrapper(async (req, res, next) => {
     const users = await features.query;
     const totalUsers = await UserModel.countDocuments();
 
-    if (!users || users.length === 0) {
-        return next(AppError.create("No Users Found", 404, httpStatusText.FAIL));
-    }
+    // if (!users || users.length === 0) {
+    //     return next(AppError.create("No Users Found", 404, httpStatusText.FAIL));
+    // }
 
     return res.status(200).json({ status: httpStatusText.SUCCESS, totalUsers, data: { users } });
 });
