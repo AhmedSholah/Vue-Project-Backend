@@ -338,12 +338,12 @@ const deleteOneProduct = asyncWrapper(async (req, res, next) => {
         return next(AppError.create("Product not found", 404, httpStatusText.FAIL));
     }
 
-    const isAdmin = role === "admin";
-    const isOwner = product.soldBy.toString() === userId.toString();
+    // const isAdmin = role === "admin";
+    // const isOwner = product.soldBy.toString() === userId.toString();
 
-    if (!isAdmin && !isOwner) {
-        return next(AppError.create("Unauthorized", 401, httpStatusText.FAIL));
-    }
+    // if (!isAdmin && !isOwner) {
+    //     return next(AppError.create("Unauthorized", 401, httpStatusText.FAIL));
+    // }
 
     await product.delete();
 
