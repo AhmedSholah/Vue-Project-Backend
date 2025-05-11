@@ -137,9 +137,9 @@ const updateUser = asyncWrapper(async (req, res, next) => {
 });
 
 const deleteUser = asyncWrapper(async (req, res, next) => {
-    const { userId } = req.tokenPayload;
+    const id = req.params.id;
 
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(id);
 
     if (!user) {
         return next(AppError.create("User Not Found", 404, httpStatusText.FAIL));

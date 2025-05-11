@@ -41,7 +41,7 @@ router
     .route("/:id")
     .get(isAuthenticated, checkPermission("view_any_user"), getUser)
     .delete(isAuthenticated, checkPermission("delete_user"), deleteUser)
-    .patch(updateUser);
+    .patch(isAuthenticated, updateUser);
 
 router.route("/me/user").get(isAuthenticated, getCurrentUser);
 
