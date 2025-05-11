@@ -109,16 +109,31 @@ const updateOrderStatus = asyncWrapper(async (req, res, next) => {
 
     return res.status(200).json({ status: httpStatusText.SUCCESS, data: updatedOrder });
 });
+
 const generalOrderUpdate = asyncWrapper(async (req, res, next) => {
     const orderId = req.params.orderId;
     const updates = req.body;
+
     const order = await OrderModel.findById(orderId);
     if (!order) {
         return next(AppError.create("Order not found!", 404, httpStatusText.FAIL));
     }
 
-    Object.assign(order, updates);
+    const user = await UserModel.findById(updates.user);
+    if (!user) {
+        return next(AppError.create("User not found!", 404, httpStatusText.FAIL));
+    }
 
+    const productIds = updates.orderItems.map((item) => item.product);
+    const foundProducts = await ProductModel.find({ _id: { $in: productIds } });
+
+    if (foundProducts.length !== productIds.length) {
+        return next(
+            AppError.create("One or more products do not exist!", 400, httpStatusText.FAIL),
+        );
+    }
+
+    Object.assign(order, updates);
     await order.save();
 
     const updatedOrder = await OrderModel.findById(orderId)
