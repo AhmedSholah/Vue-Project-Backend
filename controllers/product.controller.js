@@ -12,18 +12,88 @@ const Product = require("../models/product.model");
 
 //api/products?name=productName&category=categoryName&instock=true&tag=bestseller&colors=red,blue&price[gte]=500&price[lte]=1500&sort=-price&fields=name,price,colors,category
 
+// const getProducts = asyncWrapper(async (req, res, next) => {
+//     const queryObj = { ...req.query };
+
+//     const customFilter = {};
+
+//     if (queryObj.category) {
+//         const categoryDoc = await CategoryModel.findOne({ name: queryObj.category });
+//         if (categoryDoc) {
+//             customFilter.category = categoryDoc._id;
+//         } else {
+//             customFilter.category = null;
+//         }
+//         delete queryObj.category;
+//     }
+
+//     if (queryObj.name) {
+//         customFilter.name = { $regex: queryObj.name, $options: "i" };
+//         delete queryObj.name;
+//     }
+
+//     if (queryObj.instock !== undefined) {
+//         if (queryObj.instock === "true") {
+//             customFilter.quantity = { $gt: 0 };
+//         } else if (queryObj.instock === "false") {
+//             customFilter.quantity = { $eq: 0 };
+//         }
+//         delete queryObj.instock;
+//     }
+
+//     if (queryObj.tag) {
+//         customFilter.tags = queryObj.tag;
+//         delete queryObj.tag;
+//     }
+//     if (queryObj.color || queryObj.colors) {
+//         const colors = (queryObj.color || queryObj.colors).split(",").map((color) => color.trim());
+
+//         customFilter.colors = { $in: colors };
+//         delete queryObj.color;
+//         delete queryObj.colors;
+//     }
+
+//     const features = new APIFeatures(
+//         Product.find(customFilter)
+//             .populate({ path: "soldBy", select: "_id name" })
+//             .populate({ path: "category", select: "_id name" }),
+//         queryObj,
+//     )
+//         .filter()
+//         .sort()
+//         .limitFields()
+//         .paginate();
+
+//     const products = await features.query;
+
+//     const totalProducts = await Product.countDocuments(customFilter);
+//     const highestPricedProduct = await Product.findOne().sort({ price: -1 }).select("price");
+
+//     const total = await Product.countDocuments();
+//     // const randomSkip = Math.max(0, Math.floor(Math.random() * (total - 4)));
+//     const bestSellingProducts = await Product.find({})
+//         .sort({ salesCount: -1 })
+//         .limit(4)
+//         .populate("soldBy", "_id name");
+
+//     return res.status(200).json({
+//         status: "success",
+//         data: {
+//             totalProducts,
+//             products,
+//             bestSellingProducts,
+//             highestPricedProduct,
+//         },
+//     });
+// });
+
 const getProducts = asyncWrapper(async (req, res, next) => {
     const queryObj = { ...req.query };
-
     const customFilter = {};
 
     if (queryObj.category) {
         const categoryDoc = await CategoryModel.findOne({ name: queryObj.category });
-        if (categoryDoc) {
-            customFilter.category = categoryDoc._id;
-        } else {
-            customFilter.category = null;
-        }
+        customFilter.category = categoryDoc ? categoryDoc._id : null;
         delete queryObj.category;
     }
 
@@ -33,11 +103,7 @@ const getProducts = asyncWrapper(async (req, res, next) => {
     }
 
     if (queryObj.instock !== undefined) {
-        if (queryObj.instock === "true") {
-            customFilter.quantity = { $gt: 0 };
-        } else if (queryObj.instock === "false") {
-            customFilter.quantity = { $eq: 0 };
-        }
+        customFilter.quantity = queryObj.instock === "true" ? { $gt: 0 } : { $eq: 0 };
         delete queryObj.instock;
     }
 
@@ -45,9 +111,9 @@ const getProducts = asyncWrapper(async (req, res, next) => {
         customFilter.tags = queryObj.tag;
         delete queryObj.tag;
     }
+
     if (queryObj.color || queryObj.colors) {
         const colors = (queryObj.color || queryObj.colors).split(",").map((color) => color.trim());
-
         customFilter.colors = { $in: colors };
         delete queryObj.color;
         delete queryObj.colors;
@@ -67,10 +133,10 @@ const getProducts = asyncWrapper(async (req, res, next) => {
     const products = await features.query;
 
     const totalProducts = await Product.countDocuments(customFilter);
-    const highestPricedProduct = await Product.findOne().sort({ price: -1 }).select("price");
 
-    const total = await Product.countDocuments();
-    // const randomSkip = Math.max(0, Math.floor(Math.random() * (total - 4)));
+    const minPriceProduct = await Product.findOne().sort({ price: 1 }).select("price");
+    const maxPriceProduct = await Product.findOne().sort({ price: -1 }).select("price");
+
     const bestSellingProducts = await Product.find({})
         .sort({ salesCount: -1 })
         .limit(4)
@@ -82,10 +148,12 @@ const getProducts = asyncWrapper(async (req, res, next) => {
             totalProducts,
             products,
             bestSellingProducts,
-            highestPricedProduct,
+            minPrice: minPriceProduct?.price || 0,
+            maxPrice: maxPriceProduct?.price || 0,
         },
     });
 });
+
 // const getProducts = asyncWrapper(async (req, res, next) => {
 //     const query = req.query;
 //     const limit = query.limit || 4;
