@@ -9,6 +9,9 @@ router
     .get(isAuthenticated, checkPermission("view_roles"), asyncWrapper(roleController.getRoles))
     .post(isAuthenticated, checkPermission("create_role"), asyncWrapper(roleController.createRole));
 
-router.route("/:roleId").patch(roleController.updateRole).delete(roleController.deleteRole);
+router
+    .route("/:roleId")
+    .patch(isAuthenticated, checkPermission("edit_roles"), roleController.updateRole)
+    .delete(isAuthenticated, checkPermission("delete_roles"), roleController.deleteRole);
 
 module.exports = router;

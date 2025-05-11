@@ -14,7 +14,7 @@ router
     .get(isAuthenticated, checkPermission("view_store_settings"), getStoreSettings)
     .patch(
         isAuthenticated,
-        // checkPermission("update_store_settings"),
+        checkPermission("update_store_settings"),
         validateSchema(partialStoreSettingsSchema),
         updateStoreSettings,
     );
