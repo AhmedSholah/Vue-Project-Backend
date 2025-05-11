@@ -62,7 +62,7 @@ const login = asyncWrapper(async (req, res, next) => {
     const foundUser = await UserModel.findOne({ email }).populate("permissions", "code");
 
     if (!foundUser) {
-        return next(AppError.create("Invalid Credentials", 404, httpStatusText.FAIL));
+        return next(AppError.create("Invalid Credentials", 400, httpStatusText.FAIL));
     }
 
     // if (foundUser.role.name !== "customer") {
@@ -71,7 +71,7 @@ const login = asyncWrapper(async (req, res, next) => {
 
     const isCorretPassword = await bcryptjs.compare(password, foundUser.password);
     if (!isCorretPassword) {
-        return next(AppError.create("Invalid Credentials", 409, httpStatusText.FAIL));
+        return next(AppError.create("Invalid Credentials", 400, httpStatusText.FAIL));
     }
 
     const userRole = await Role.findById(foundUser.role).populate("permissions", "code");
