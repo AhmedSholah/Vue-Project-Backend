@@ -24,7 +24,7 @@ router
     )
     .post(
         isAuthenticated,
-        // checkPermission("create_product"),
+        checkPermission("create_product"),
         validateSchema(addProductSchema),
         productsController.addOneProduct,
     );
@@ -34,13 +34,13 @@ router
     .get(productsController.getOneProduct)
     .patch(
         isAuthenticated,
-        // checkPermission("update_product"),
+        checkPermission("update_product"),
         validateSchema(updateProductSchema),
         productsController.updateOneProduct,
     )
     .delete(
         isAuthenticated,
-        // checkPermission("delete_product"),
+        checkPermission("delete_product"),
         validateSchema(deleteProductSchema, "params"),
         productsController.deleteOneProduct,
     );
@@ -55,12 +55,14 @@ router
         productsController.addProductImage,
     );
 
-router.route("/:productId/image/:imageIndex").delete(
-    isAuthenticated,
-    // checkPermission("update_product"),
-    validateSchema(updateProductSchema),
-    upload.single("file"),
-    productsController.deleteProductImage,
-);
+router
+    .route("/:productId/image/:imageIndex")
+    .delete(
+        isAuthenticated,
+        checkPermission("update_product"),
+        validateSchema(updateProductSchema),
+        upload.single("file"),
+        productsController.deleteProductImage,
+    );
 
 module.exports = router;

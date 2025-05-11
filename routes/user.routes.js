@@ -23,11 +23,7 @@ const checkPermission = require("../middlewares/checkPermission");
 
 router
     .route("/")
-    .get(
-        // isAuthenticated,
-        //  checkPermission("view_all_users"),
-        getAllUsers,
-    )
+    .get(isAuthenticated, checkPermission("view_all_users"), getAllUsers)
     .patch(
         isAuthenticated,
         // validateSchema(userValidation.updateUserSchema)
@@ -35,7 +31,7 @@ router
     )
     .post(
         isAuthenticated,
-        // checkPermission('create_user')
+        checkPermission("create_user"),
         // validateSchema(authValidation.registerSchema),
         createUser,
     );
@@ -43,12 +39,8 @@ router
 // For Admin Use
 router
     .route("/:id")
-    .get(
-        isAuthenticated,
-        // checkPermission("view_any_user"),
-        getUser,
-    )
-    .delete(isAuthenticated, deleteUser)
+    .get(isAuthenticated, checkPermission("view_any_user"), getUser)
+    .delete(isAuthenticated, checkPermission("delete_user"), deleteUser)
     .patch(updateUser);
 
 router.route("/me/user").get(isAuthenticated, getCurrentUser);

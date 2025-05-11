@@ -80,7 +80,16 @@ const getCurrentUser = asyncWrapper(async (req, res, next) => {
     const currentUser = await UserModel.findById(userId, {
         __v: false,
         password: false,
-    });
+    })
+        .populate("permissions", "code")
+        .populate({
+            path: "role",
+            populate: {
+                path: "permissions",
+                model: "Permission",
+            },
+        });
+
     if (!currentUser) {
         return next(AppError.create("User Not Found", 404, httpStatusText.FAIL));
     }
@@ -176,6 +185,7 @@ const updateAvatar = asyncWrapper(async (req, res, next) => {
         },
     });
 });
+
 const createUser = asyncWrapper(async function (req, res, next) {
     let {
         name,

@@ -65,6 +65,10 @@ const login = asyncWrapper(async (req, res, next) => {
         return next(AppError.create("Invalid Credentials", 404, httpStatusText.FAIL));
     }
 
+    // if (foundUser.role.name !== "customer") {
+    //     return next(AppError.create("Invalid Credentials", 404, httpStatusText.FAIL));
+    // }
+
     const isCorretPassword = await bcryptjs.compare(password, foundUser.password);
     if (!isCorretPassword) {
         return next(AppError.create("Invalid Credentials", 501, httpStatusText.FAIL));
