@@ -71,7 +71,7 @@ const login = asyncWrapper(async (req, res, next) => {
 
     const isCorretPassword = await bcryptjs.compare(password, foundUser.password);
     if (!isCorretPassword) {
-        return next(AppError.create("Invalid Credentials", 501, httpStatusText.FAIL));
+        return next(AppError.create("Invalid Credentials", 409, httpStatusText.FAIL));
     }
 
     const userRole = await Role.findById(foundUser.role).populate("permissions", "code");
