@@ -20,7 +20,7 @@ router.route("/:orderId").get(isAuthenticated, orderController.getOrder).patch(
     orderController.generalOrderUpdate,
 );
 // .delete(
-isAuthenticated,
-    // deleteOrder);
+// isAuthenticated,
+// deleteOrder);
 
-    (module.exports = router);
+module.exports = router;
