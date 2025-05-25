@@ -10,9 +10,7 @@ module.exports = function isAuthenticated(req, res, next) {
             req.tokenPayload = tokenPayload;
             return next();
         } catch (err) {
-            return next(
-                AppError.create("Unauthorized", 401, httpStatusText.ERROR)
-            );
+            return next(AppError.create("Unauthorized", 401, httpStatusText.ERROR));
         }
     } else {
         return next(AppError.create("Unauthorized", 401, httpStatusText.ERROR));

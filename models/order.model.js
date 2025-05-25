@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongooseDelete = require("mongoose-delete");
 
 const orderSchema = new mongoose.Schema(
     {
@@ -34,7 +35,7 @@ const orderSchema = new mongoose.Schema(
         paymentMethod: {
             type: String,
             required: true,
-            enum: ["wallet", "visa"],
+            enum: ["wallet", "visa", "paypal", "cash"],
             default: "wallet",
         },
         paymentStatus: {
@@ -51,10 +52,19 @@ const orderSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
+        simulatedCreatedAt: {
+            type: Date,
+            default: Date.now(),
+        },
         deliveredAt: Date,
     },
-    { timestamps: true }
+    { timestamps: true },
 );
+
+orderSchema.plugin(mongooseDelete, {
+    deletedAt: true,
+    overrideMethods: "all",
+});
 
 const Order = mongoose.model("Order", orderSchema);
 

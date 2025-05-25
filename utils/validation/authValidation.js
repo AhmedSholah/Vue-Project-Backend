@@ -9,7 +9,7 @@ const passwordSchema = z
     .regex(/[0-9]/, "Password must contain at least one number (0-9)")
     .regex(
         /[!@#$%^&*(),.?":{}|<>]/,
-        "Password must contain at least one special character (!, @, #, etc.)"
+        "Password must contain at least one special character (!, @, #, etc.)",
     )
     .refine((password) => !/\s/.test(password), {
         message: "Password must not contain spaces",
@@ -24,12 +24,13 @@ const loginSchema = z
 
 const registerSchema = z
     .object({
-        firstName: z.string().min(3),
-        lastName: z.string().min(3),
+        name: z.string().min(3),
+        // firstName: z.string().min(3),
+        // lastName: z.string().min(3),
         email: z.string().email(),
         password: passwordSchema,
-        gender: z.enum(["male", "female"]),
-        role: z.enum(["client", "seller"]),
+        // gender: z.enum(["male", "female"]),
+        // role: z.enum(["client", "seller"]),
     })
     .strict();
 

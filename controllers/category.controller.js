@@ -10,9 +10,7 @@ const { s3Client } = require("../utils/s3.utils");
 const getCategories = asyncWrapper(async (req, res, next) => {
     const categories = await categoryModel.find({});
     if (!categories) {
-        return next(
-            AppError.create("No Categories Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("No Categories Found", 404, httpStatusText.FAIL));
     }
     return res.json({ status: httpStatusText.SUCCESS, data: { categories } });
 });
@@ -22,9 +20,7 @@ const addCategory = asyncWrapper(async (req, res, next) => {
     const oldCategory = await categoryModel.findOne({ name });
 
     if (oldCategory) {
-        return next(
-            AppError.create("Categorie Already Exist", 409, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Categorie Already Exist", 409, httpStatusText.FAIL));
     }
 
     await categoryModel.create({ name });
@@ -32,6 +28,22 @@ const addCategory = asyncWrapper(async (req, res, next) => {
     return res.json({
         status: httpStatusText.SUCCESS,
         data: { message: "Category created successfully." },
+    });
+});
+
+const updateCategory = asyncWrapper(async (req, res, next) => {
+    const { categoryId } = req.params;
+    const { name } = req.body;
+
+    const category = await categoryModel.findByIdAndUpdate(categoryId, { name }, { new: true });
+
+    if (!category) {
+        return next(AppError.create("Category Not Found", 404, httpStatusText.FAIL));
+    }
+
+    return res.json({
+        status: httpStatusText.SUCCESS,
+        data: { message: "Category updated successfully." },
     });
 });
 
@@ -44,22 +56,17 @@ const deletCategory = asyncWrapper(async (req, res, next) => {
     if (!category) {
         await session.abortTransaction();
         session.endSession();
-        return next(
-            AppError.create("Categorie Not Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Category Not Found", 404, httpStatusText.FAIL));
     }
 
-    await ProductModel.deleteMany(
-        {
-            category: categoryId,
-        },
-        { session }
-    );
+    await ProductModel.delete({ category: categoryId }, { session });
 
-    await categoryModel.findByIdAndDelete(categoryId).session(session);
+    await category.delete({ session });
+
     await session.commitTransaction();
     session.endSession();
 
+    // Send a response indicating success
     return res.json({
         status: httpStatusText.SUCCESS,
         data: null,
@@ -72,13 +79,11 @@ const updateCategoryImage = asyncWrapper(async (req, res, next) => {
     const category = await categoryModel.findById(categoryId);
 
     if (!category) {
-        return next(
-            AppError.create("Category Not Found", 404, httpStatusText.FAIL)
-        );
+        return next(AppError.create("Category Not Found", 404, httpStatusText.FAIL));
     }
 
     const deleteCommand = new DeleteObjectCommand({
-        Bucket: "main",
+        Bucket: "vue-project",
         Key: category.image,
     });
 
@@ -93,7 +98,7 @@ const updateCategoryImage = asyncWrapper(async (req, res, next) => {
     }`;
 
     const params = {
-        Bucket: "main",
+        Bucket: "vue-project",
         Key: newImagePath,
         Body: req.file.buffer,
         ContentType: req.file.mimetype,
@@ -106,13 +111,7 @@ const updateCategoryImage = asyncWrapper(async (req, res, next) => {
         category.image = newImagePath;
         await category.save();
     } catch (error) {
-        return next(
-            AppError.create(
-                "Error uploading new image",
-                500,
-                httpStatusText.FAIL
-            )
-        );
+        return next(AppError.create("Error uploading new image", 500, httpStatusText.FAIL));
     }
 
     await res.status(200).json({
@@ -126,6 +125,7 @@ const updateCategoryImage = asyncWrapper(async (req, res, next) => {
 module.exports = {
     getCategories,
     addCategory,
+    updateCategory,
     deletCategory,
     updateCategoryImage,
 };

@@ -9,6 +9,7 @@ const {
     updateProductSchema,
     addProductSchema,
 } = require("../utils/validation/productValidation");
+const checkPermission = require("../middlewares/checkPermission");
 
 const multer = require("multer");
 
@@ -18,14 +19,14 @@ const upload = multer({ storage: storage });
 router
     .route("/")
     .get(
-        validateSchema(getProductsSchema, "query"),
-        productsController.getProducts
+        // validateSchema(getProductsSchema, "query"),
+        productsController.getProducts,
     )
     .post(
         isAuthenticated,
-        checkRole(["seller", "admin"]),
+        checkPermission("create_product"),
         validateSchema(addProductSchema),
-        productsController.addOneProduct
+        productsController.addOneProduct,
     );
 
 router
@@ -33,35 +34,35 @@ router
     .get(productsController.getOneProduct)
     .patch(
         isAuthenticated,
-        checkRole(["seller", "admin"]),
+        checkPermission("update_product"),
         validateSchema(updateProductSchema),
-        productsController.updateOneProduct
+        productsController.updateOneProduct,
     )
     .delete(
         isAuthenticated,
-        checkRole(["seller", "admin"]),
+        checkPermission("delete_product"),
         validateSchema(deleteProductSchema, "params"),
-        productsController.deleteOneProduct
+        productsController.deleteOneProduct,
     );
 
 router
     .route("/:productId/image")
     .put(
         isAuthenticated,
-        checkRole(["seller", "admin"]),
+        checkPermission("update_product"),
         validateSchema(updateProductSchema),
         upload.single("file"),
-        productsController.addProductImage
+        productsController.addProductImage,
     );
 
 router
     .route("/:productId/image/:imageIndex")
     .delete(
         isAuthenticated,
-        checkRole(["seller", "admin"]),
+        checkPermission("update_product"),
         validateSchema(updateProductSchema),
         upload.single("file"),
-        productsController.deleteProductImage
+        productsController.deleteProductImage,
     );
 
 module.exports = router;

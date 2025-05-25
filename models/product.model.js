@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const FavoriteModel = require("./favorite.model");
+const mongooseDelete = require("mongoose-delete");
 
 const productSchema = new mongoose.Schema(
     {
@@ -25,6 +25,31 @@ const productSchema = new mongoose.Schema(
                 // required: true,
             },
         ],
+        colors: {
+            type: [String],
+            default: [
+                "Black",
+                "White",
+                "Gray",
+                "Red",
+                "Green",
+                "Blue",
+                "Yellow",
+                "Orange",
+                "Purple",
+                "Pink",
+                "Brown",
+                "Cyan",
+                "Magenta",
+                "Navy",
+                "Olive",
+                "Teal",
+                "Maroon",
+                "Lime",
+                "Indigo",
+                "Turquoise",
+            ],
+        },
         discountAmount: {
             type: Number,
             default: 0,
@@ -44,10 +69,7 @@ const productSchema = new mongoose.Schema(
         description: {
             type: String,
             required: true,
-            minlength: [
-                100,
-                "Description must be at least 100 characters long.",
-            ],
+            minlength: [10, "Description must be at least 10 characters long."],
             maxLength: [5000, "Description cannot exceed 5000 characters."],
         },
         views: {
@@ -59,6 +81,10 @@ const productSchema = new mongoose.Schema(
             type: Number,
             required: true,
             min: 0,
+        },
+        simulatedCreatedAt: {
+            type: Date,
+            default: Date.now(),
         },
         // weight: {
         //     type: Number,
@@ -78,24 +104,35 @@ const productSchema = new mongoose.Schema(
                 estimatedDelivery: { type: Number, min: 0, required: true },
             },
         },
+        tags: [
+            {
+                type: String,
+                enum: [
+                    "new_arrival",
+                    "sale",
+                    "eco_friendly",
+                    "limited_edition",
+                    "handmade",
+                    "bestseller",
+                ],
+            },
+        ],
         soldBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            required: true,
+            // required: true,
         },
     },
     {
         timestamps: true,
         toJSON: { virtuals: true },
         toObject: { virtuals: true },
-    }
+    },
 );
 
 productSchema.virtual("priceAfterDiscount").get(function () {
     const calculatedPrice =
-        this.price -
-        this.discountAmount -
-        this.price * (this.discountPercentage / 100);
+        this.price - this.discountAmount - this.price * (this.discountPercentage / 100);
 
     return Math.max(calculatedPrice, 0);
 });
@@ -105,8 +142,13 @@ productSchema.virtual("images").get(function () {
         return [];
     }
     return this.imageNames.map(
-        (imageName) => `${process.env.AWS_S3_PUBLIC_BUCKET_URL}${imageName}`
+        (imageName) => `${process.env.AWS_S3_PUBLIC_BUCKET_URL}/${imageName}`,
     );
+});
+
+productSchema.plugin(mongooseDelete, {
+    deletedAt: true,
+    overrideMethods: "all",
 });
 
 const Product = mongoose.model("Product", productSchema);

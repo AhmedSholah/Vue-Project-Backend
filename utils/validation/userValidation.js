@@ -41,8 +41,9 @@ const egyptianCities = [
 
 const updateUserSchema = z
     .object({
-        firstName: z.string().min(3).max(16).optional(),
-        lastName: z.string().min(3).max(16).optional(),
+        name: z.string().min(3).max(16).optional(),
+        // firstName: z.string().min(3).max(16).optional(),
+        // lastName: z.string().min(3).max(16).optional(),
         phoneNumber: z.string().length(11).optional(),
         country: z.enum(["Egypt"]).optional(),
         city: z.enum(egyptianCities).optional(),

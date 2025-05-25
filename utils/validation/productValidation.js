@@ -6,55 +6,74 @@ const queryParamsNumberSchema = z
     .refine((val) => !isNaN(val))
     .transform((val) => Number(val));
 
-const addProductSchema = z
-    .object({
-        name: z.string().min(3),
-        images: z.array().optional(),
-        price: z.number().min(0),
-        discountAmount: z.number().min(0).optional(),
-        discountPercentage: z.number().min(0).max(100).optional(),
-        category: objectIdSchema,
-        // description: z.string().min(100).max(500),
-        description: z.string().min(100).max(500),
-        quantity: z.number().min(0),
-        weight: z.number().min(0),
-        dimensions: z.object({
-            length: z.number().min(0),
-            width: z.number().min(0),
-            height: z.number().min(0),
-        }),
-        shippingInfo: z.object({
-            shippingCost: z.number().min(0),
-            estimatedDelivery: z.number().min(0),
-        }),
-    })
-    .strict();
+const addProductSchema = z.object({
+    name: z.string().min(3),
+    imageNames: z.array(z.string()).optional(),
+    price: z.number().min(0),
+    rating: z.number().min(0).max(5).optional(),
+    colors: z.array(z.string()).optional(),
+    discountAmount: z.number().min(0).optional(),
+    discountPercentage: z.number().min(0).max(100).optional(),
+    category: objectIdSchema,
+    description: z.string().min(10).max(5000),
+    quantity: z.number().min(0),
+    shippingInfo: z.object({
+        shippingCost: z.number().min(0),
+        estimatedDelivery: z.number().min(0),
+    }),
+    tags: z
+        .array(
+            z.enum([
+                "new_arrival",
+                "sale",
+                "eco_friendly",
+                "limited_edition",
+                "handmade",
+                "bestseller",
+            ]),
+        )
+        .optional(),
+});
+// .strict();
 
-const updateProductSchema = z
-    .object({
-        name: z.string().min(3).optional(),
-        price: z.number().min(0).optional(),
-        discountAmount: z.number().min(0).optional(),
-        discountPercentage: z.number().min(0).max(100).optional(),
-        category: objectIdSchema.optional(),
-        description: z.string().min(100).max(5000).optional(),
-        quantity: z.number().min(0).optional(),
-        weight: z.number().min(0).optional(),
-        dimensions: z
-            .object({
-                length: z.number().min(0).optional(),
-                width: z.number().min(0).optional(),
-                height: z.number().min(0).optional(),
-            })
-            .optional(),
-        shippingInfo: z
-            .object({
-                shippingCost: z.number().min(0).optional(),
-                estimatedDelivery: z.number().min(0).optional(),
-            })
-            .optional(),
-    })
-    .strict();
+const updateProductSchema = z.object({
+    name: z.string().min(3).optional(),
+    price: z.number().min(0).optional(),
+    // discountAmount: z.number().min(0).optional(),
+    // discountPercentage: z.number().min(0).max(100).optional(),
+    category: objectIdSchema.optional(),
+    description: z.string().min(10).max(5000).optional(),
+    quantity: z.number().min(0).optional(),
+
+    // weight: z.number().min(0).optional(),
+    // dimensions: z
+    //     .object({
+    //         length: z.number().min(0).optional(),
+    //         width: z.number().min(0).optional(),
+    //         height: z.number().min(0).optional(),
+    //     })
+    //     .optional(),
+    shippingInfo: z
+        .object({
+            shippingCost: z.number().min(0).optional(),
+            estimatedDelivery: z.number().min(0).optional(),
+        })
+        .optional(),
+    tags: z
+        .array(
+            z.enum([
+                "new_arrival",
+                "sale",
+                "eco_friendly",
+                "limited_edition",
+                "handmade",
+                "bestseller",
+            ]),
+        )
+        .optional(),
+    colors: z.array(z.string()).optional(),
+});
+// .strict();
 
 const getProductsSchema = z.object({
     page: queryParamsNumberSchema,
